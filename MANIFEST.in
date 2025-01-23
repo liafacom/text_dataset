@@ -1,0 +1,13 @@
+include text_dataset/datasets/*.csv
+include text_dataset/datasets/*.meta
+include text_dataset/datasets/*.txt
+include text_dataset/datasets/data-web-snippets/*.txt
+include text_dataset/datasets/mpqa/*.txt
+include text_dataset/datasets/tag_my_news/business/*.txt
+include text_dataset/datasets/tag_my_news/entertainment/*.txt
+include text_dataset/datasets/tag_my_news/health/*.txt
+include text_dataset/datasets/tag_my_news/sci_tech/*.txt
+include text_dataset/datasets/tag_my_news/sport/*.txt
+include text_dataset/datasets/tag_my_news/us/*.txt
+include text_dataset/datasets/tag_my_news/world/*.txt
+
