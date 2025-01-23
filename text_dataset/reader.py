@@ -35,6 +35,9 @@ stop_words = set(stopwords.words("english"))
 TEST_SIZE = 0.3
 RANDOM_STATE = 0
 
+base_dir = os.path.dirname(os.path.abspath(__file__))  # Diretório atual deste arquivo
+folder = os.path.join(base_dir, "datasets/")
+
 def writing_file_sync(run, filename="wandb_sync_file_imodel.txt"):
     dir = run.dir
     parent_dir = os.path.dirname(dir)
@@ -54,7 +57,7 @@ def writing_file_sync(run, filename="wandb_sync_file_imodel.txt"):
 
 def get_classic4():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
-    data = pd.read_csv("text_dataset/datasets/classic4.csv")
+    data = pd.read_csv(f"{folder}classic4.csv")
     # test_classic4_size = 1419
     test_classic4_size = TEST_SIZE
     le = preprocessing.LabelEncoder()
@@ -71,7 +74,7 @@ def get_classic4():
     return df_train, df_test, target_names, dataset_name
 
 
-def get_20newsgroups(pathto="datasets/"):
+def get_20newsgroups():
     data_train = fetch_20newsgroups(subset="train")
     data_test = fetch_20newsgroups(subset="test")
     target_names = data_test.target_names  # type: ignore
@@ -96,8 +99,8 @@ def check_log_path(dataset_name):
     if not os.path.exists(caminho):
         os.makedirs(caminho)
     
-def get_bbc(pathto="datasets/"):
-    data = pd.read_csv(pathto + "bbc.csv")
+def get_bbc():
+    data = pd.read_csv(folder + "bbc.csv")
     data["class"] = data.label
     # total 300
     test_cstr_size = TEST_SIZE
@@ -115,8 +118,8 @@ def get_bbc(pathto="datasets/"):
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
-def get_bbcsport(pathto="datasets/"):
-    data = pd.read_csv(pathto + "bbcsport.csv")
+def get_bbcsport():
+    data = pd.read_csv(folder + "bbcsport.csv")
     # total 300
     test_cstr_size = TEST_SIZE
     le = preprocessing.LabelEncoder()
@@ -135,7 +138,7 @@ def get_bbcsport(pathto="datasets/"):
     return df_train, df_test, target_names, dataset_name
 
 
-def get_pge(pathto="datasets/"):
+def get_pge(pathto):
     # d = pd.read_csv("datasets/pge.csv")
     # d.loc[d.label_names.isin(["penhora", "arresto"]),"label_names"] = "penhora_arresto"
     # d.label_names.value_counts()
@@ -156,9 +159,10 @@ def get_pge(pathto="datasets/"):
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
-def get_cstr(pathto="datasets/"):
+def get_cstr():
+    print("File with problems! Check class and text. Samples with same text and different classes!")
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
-    data = pd.read_csv(pathto + "CSTR.csv")
+    data = pd.read_csv(folder + "CSTR.csv")
     # total 300
     test_cstr_size = TEST_SIZE
     le = preprocessing.LabelEncoder()
@@ -175,7 +179,7 @@ def get_cstr(pathto="datasets/"):
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
-def get_trec(folder="datasets/", fine=False):
+def get_trec(fine=False):
     dataset_name = "trec"
     
     df_train = pd.read_csv(f"{folder}trec_train.csv")
@@ -198,13 +202,13 @@ def get_trec(folder="datasets/", fine=False):
     
     return df_train, df_test, target_names, dataset_name
 
-def get_trec_fine(folder="datasets/"):
+def get_trec_fine():
     df_train, df_test, target_names, _ = get_trec(folder, fine=True)
     dataset_name = "trec_fine"
     return df_train, df_test, target_names, dataset_name
     
 
-def get_ohsumed(folder="datasets/"):
+def get_ohsumed():
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
     data = pd.read_csv(
         f"{folder}ohsumed.txt", encoding="latin-1", header=None, delimiter="\t"
@@ -254,15 +258,15 @@ def get_ohsumed(folder="datasets/"):
     return df_train, df_test, target_names, dataset_name
 
  
-def get_snippets(pathto="datasets/"):
+def get_snippets():
     dataset_name = "snippets"
     
-    df_train = pd.read_csv(f"{pathto}data-web-snippets/train.txt", header=None)
+    df_train = pd.read_csv(f"{folder}data-web-snippets/train.txt", header=None)
     df_train["text"] = [" ".join(t.split()[:-1])  for t in df_train[0]]
     df_train["label_names"] = [t.split()[-1]  for t in df_train[0]]
     df_train["subset"] = "train"
     
-    df_test = pd.read_csv(f"{pathto}data-web-snippets/test.txt", header=None)
+    df_test = pd.read_csv(f"{folder}data-web-snippets/test.txt", header=None)
     df_test["text"] = [" ".join(t.split()[:-1])  for t in df_test[0]]
     df_test["label_names"] = [t.split()[-1]  for t in df_test[0]]
     df_test["subset"] = "test"    
@@ -274,7 +278,7 @@ def get_snippets(pathto="datasets/"):
     target_names = le.classes_
     return df_train, df_test, list(target_names), dataset_name
 
-def get_r8_double(folder="datasets/"):
+def get_r8_double():
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
     # data = pd.read_csv(
     #     f"{folder}R8.txt", encoding="latin-1", header=None, delimiter="\t"
@@ -320,8 +324,6 @@ def get_reuters():
     return df_train, df_test, target_names, dataset_name
 
 def get_r8():
-    base_dir = os.path.dirname(os.path.abspath(__file__))  # Diretório atual deste arquivo
-    folder = os.path.join(base_dir, "datasets/")
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
     data = pd.read_csv(
         f"{folder}R8.txt", encoding="latin-1", header=None, delimiter="\t"
@@ -343,7 +345,7 @@ def get_r8():
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
-def get_r8_tiny(folder="datasets/", max_sample_class=10, random_state=42):
+def get_r8_tiny(max_sample_class=10, random_state=42):
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
     data = pd.read_csv(
         f"{folder}R8.txt", encoding="latin-1", header=None, delimiter="\t"
@@ -375,7 +377,7 @@ def get_r8_tiny(folder="datasets/", max_sample_class=10, random_state=42):
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
-def get_r52(folder="datasets/"):
+def get_r52():
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
     data = pd.read_csv(
         f"{folder}R52.txt", encoding="latin-1", header=None, delimiter="\t"
@@ -397,7 +399,7 @@ def get_r52(folder="datasets/"):
     return df_train, df_test, target_names, dataset_name
 
 
-def get_mr(folder="datasets/"):
+def get_mr():
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
     data = pd.read_csv(
         f"{folder}mr.txt", encoding="latin-1", header=None, delimiter="\t"
@@ -413,12 +415,6 @@ def get_mr(folder="datasets/"):
     df_test = data[data.subset == "test"].copy()
     dataset_name = "movie_review"
     return df_train, df_test, target_names, dataset_name
-
-def make_scores_json(y_true, y_pred, subset, target_names=None):
-    json_metrics = {}
-    # acc, f1-micro, macro, prec, recal
-    # json_metrics[f"acc_{subset}"] = 
-    return json_metrics
 
 def make_scores(y_true, y_pred, pred_proba, target_names, subset):
     y_true = np.array(y_true)
@@ -471,7 +467,7 @@ columns_data = ["text", "label", "label_names", "subset"]
 
 def get_nsf():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
-    data = pd.read_csv("datasets/NSF.csv")
+    data = pd.read_csv(f"{folder}NSF.csv")
     data["text"] = data.x
     # total 16207
     le = preprocessing.LabelEncoder()
@@ -488,7 +484,7 @@ def get_nsf():
 
 def get_syskillwebert():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
-    data = pd.read_csv("datasets/SyskillWebert.csv")
+    data = pd.read_csv(f"{folder}SyskillWebert.csv")
     # print(data)
     test_syskillwebert_size = TEST_SIZE
     # total 16207
@@ -519,7 +515,7 @@ def get_twitter():
         "val_text.txt",
     ]
 
-    path_data = "datasets/twitter"
+    path_data = f"{folder}twitter"
 
     if not os.path.exists(path_data):
         os.makedirs(path_data)
@@ -561,9 +557,9 @@ def get_twitter():
 def get_webkb():
     # 70% train
     # 30% test
-    text = pd.read_csv("datasets/WebKB.txt", header=None)
+    text = pd.read_csv(f"{folder}WebKB.txt", header=None)
     text.columns = ["text"]
-    labels = pd.read_csv("datasets/WebKB_label.txt", header=None, delimiter="\t")
+    labels = pd.read_csv(f"{folder}WebKB_label.txt", header=None, delimiter="\t")
     labels.columns = ["idx", "subset", "label_names"]
     df = pd.concat([text, labels], axis=1)
     le = preprocessing.LabelEncoder()
@@ -583,9 +579,9 @@ def get_webkb():
 def get_dblp():
     # 70% train
     # 30% test
-    text = pd.read_csv("datasets/dblp.txt", header=None)
+    text = pd.read_csv(f"{folder}dblp.txt", header=None)
     text.columns = ["text"]
-    labels = pd.read_csv("datasets/dblp_labels.txt", header=None, delimiter="\t")
+    labels = pd.read_csv(f"{folder}dblp_labels.txt", header=None, delimiter="\t")
     labels.columns = ["idx", "subset", "label_names"]
     df = pd.concat([text, labels], axis=1)
     le = preprocessing.LabelEncoder()
@@ -600,8 +596,8 @@ def get_dblp():
     dataset_name = "dblp"
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name  # type: ignore
 
-def get_ag_news(pathto="datasets/"):
-    path_data = f"{pathto}ag_news"
+def get_ag_news():
+    path_data = f"{folder}ag_news"
     df_train = pd.read_csv(f"{path_data}/train.csv", header=None)
     df_train.columns = ["label", "title", "content"]
     df_test = pd.read_csv(f"{path_data}/test.csv", header=None)
@@ -626,13 +622,13 @@ def get_imdb():
     neg_files_train = []
     neg_files_test = []
 
-    neg_files_test.extend(glob.glob("datasets/imdb/aclImdb/test/neg/*.txt"))
-    neg_files_train.extend(glob.glob("datasets/imdb/aclImdb/train/neg/*.txt"))
+    neg_files_test.extend(glob.glob(f"{folder}imdb/aclImdb/test/neg/*.txt"))
+    neg_files_train.extend(glob.glob(f"{folder}imdb/aclImdb/train/neg/*.txt"))
 
     pos_files_train = []
     pos_files_test = []
-    pos_files_test.extend(glob.glob("datasets/imdb/aclImdb/test/pos/*.txt"))
-    pos_files_train.extend(glob.glob("datasets/imdb/aclImdb/train/pos/*.txt"))
+    pos_files_test.extend(glob.glob(f"{folder}imdb/aclImdb/test/pos/*.txt"))
+    pos_files_train.extend(glob.glob(f"{folder}imdb/aclImdb/train/pos/*.txt"))
 
     texts = []
     for path in neg_files_test:
@@ -791,7 +787,7 @@ def get_trec_6():
     return train_df, test_df, target_names, dataset_name
 
 
-def get_agnew(pathto="datasets/"):
+def get_agnew():
     import torchtext
     data_train = torchtext.datasets.AG_NEWS(split='train')
     data_test = torchtext.datasets.AG_NEWS(split='test')
@@ -812,7 +808,7 @@ def get_agnew(pathto="datasets/"):
 
 def get_dmozcomputers():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
-    data = pd.read_csv("datasets/dmoz_computers.csv")
+    data = pd.read_csv(f"{folder}dmoz_computers.csv")
     # print(data)
     test_dmoz_computers_size = TEST_SIZE
     # total 16207
@@ -833,7 +829,7 @@ def get_dmozcomputers():
 
 def get_dmozscience():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
-    data = pd.read_csv("datasets/dmoz_science.csv")
+    data = pd.read_csv(f"{folder}dmoz_science.csv")
     # print(data)
     test_dmoz_computers_size = TEST_SIZE
     # total 16207
@@ -854,7 +850,7 @@ def get_dmozscience():
 
 def get_dmozhealth():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
-    data = pd.read_csv("datasets/dmoz_health.csv")
+    data = pd.read_csv(f"{folder}dmoz_health.csv")
     # print(data)
     test_dmoz_computers_size = TEST_SIZE
     # total 16207
@@ -875,7 +871,7 @@ def get_dmozhealth():
 
 def get_dmozsports():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
-    data = pd.read_csv("datasets/dmoz_sports.csv")
+    data = pd.read_csv(f"{folder}dmoz_sports.csv")
     # print(data)
     test_dmoz_computers_size = TEST_SIZE
     # total 16207
@@ -1098,8 +1094,8 @@ def get_ohsumed_title():
     return get_ohsumed_root(True)
 
 def get_ohsumed_root(only_title=False):
-    df_train = load_text_path("datasets/ohsumed/training")
-    df_test = load_text_path("datasets/ohsumed/test")
+    df_train = load_text_path(f"{folder}ohsumed/training")
+    df_test = load_text_path(f"{folder}ohsumed/test")
     
     le = preprocessing.LabelEncoder()
     le.fit(df_train["label_names"])
@@ -1160,7 +1156,7 @@ def get_twitter_10k():
 def get_tag_my_news():
 
     # Exemplo de uso:
-    directory_path = 'datasets/tag_my_news'
+    directory_path = f"{folder}tag_my_news"
     data = load_text_dataset(directory_path)
     
     # total 16207
@@ -1178,7 +1174,7 @@ def get_tag_my_news():
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name
 
 def get_mpqa():
-    data = pd.read_csv("datasets/mpqa/mpqa.txt", header=None, sep="\t")
+    data = pd.read_csv(f"{folder}mpqa/mpqa.txt", header=None, sep="\t")
     data.columns = ["label_names", "text"]
     # total 16207
     le = preprocessing.LabelEncoder()
@@ -1480,14 +1476,14 @@ def build_stats(datasets=datasets):
     format_2_decimals = lambda x: f'{x:.2f}' if isinstance(x, (int, float)) else x
     # Aplicar a função a todas as colunas numéricas
     datasets_stats = datasets_stats.map(format_2_decimals)
-    datasets_stats.to_csv("artifacts/docs/dataset_stats.csv", index=False)
+    datasets_stats.to_csv("dataset_stats.csv", index=False)
     # datasets_stats.to_excel("artifacts/docs/dataset_stats.xlsx", index=False)
-    datasets_stats.to_markdown("artifacts/docs/dataset_stats.md", index=False)
-    datasets_stats.to_html("artifacts/docs/dataset_stats.html", index=False)
+    datasets_stats.to_markdown("dataset_stats.md", index=False)
+    datasets_stats.to_html("dataset_stats.html", index=False)
 
 # build_stats()
 
-def get_tiny_dataset(df_train, df_test, folder="datasets/", max_sample_class=10, random_state=42, keep_test=False):
+def get_tiny_dataset(df_train, df_test, max_sample_class=10, random_state=42, keep_test=False):
     # Balanceado (10 exemplos por classe)
     df_train = df_train.groupby("label", group_keys=False).apply(
         lambda x: x.sample(n=min(max_sample_class, len(x)), random_state=random_state)
