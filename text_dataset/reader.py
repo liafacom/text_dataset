@@ -1677,4 +1677,4 @@ def get_tiny_dataset(
     return df_train, df_test
 
 
-build_stats()
+# build_stats()
