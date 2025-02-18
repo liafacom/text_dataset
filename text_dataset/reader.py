@@ -178,8 +178,10 @@ def get_sst5():
     df_train = pd.read_csv(folder + "sst5/sst5_train.csv")
     df_train.columns = ["label", "text"]
     df_train["subset"] = "train"
+    df_train["label_names"] = [str(c + 1) for c in df_train.label]
     df_test = pd.read_csv(folder + "sst5/sst5_test.csv")
     df_test.columns = ["label", "text"]
+    df_test["label_names"] = [str(c + 1) for c in df_test.label]
     df_test["subset"] = "test"
 
     dataset_name = "sst5"
@@ -193,9 +195,15 @@ def get_sst2():
     dev = pd.read_csv(folder + "sst2/dev.tsv", sep="\t", header=None)
     df_train = pd.concat([train, dev]).reset_index(drop=True)
     df_train.columns = ["label", "text"]
+    df_train["label_names"] = [
+        "positive" if c == 1 else "negative" for c in df_train.label
+    ]
     df_train["subset"] = "train"
     df_test = pd.read_csv(folder + "sst2/test.tsv", sep="\t", header=None)
     df_test.columns = ["label", "text"]
+    df_test["label_names"] = [
+        "positive" if c == 1 else "negative" for c in df_test.label
+    ]
     df_test["subset"] = "test"
 
     dataset_name = "sst2"
@@ -239,28 +247,6 @@ def get_bbcsport():
     df_train["subset"] = "train"
     df_test["subset"] = "test"
     dataset_name = "bbcsport"
-    target_names = le.classes_
-    return df_train, df_test, target_names, dataset_name
-
-
-def get_pge(pathto):
-    # d = pd.read_csv("datasets/pge.csv")
-    # d.loc[d.label_names.isin(["penhora", "arresto"]),"label_names"] = "penhora_arresto"
-    # d.label_names.value_counts()
-    # d.to_csv("datasets/pge.csv", index=False)
-    # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
-    data = pd.read_csv(f"{pathto}/pge.csv")
-    # test_classic4_size = 1419
-    test_size = 0.2
-    le = preprocessing.LabelEncoder()
-    le.fit(data["label_names"])
-    data["label"] = le.transform(data["label_names"])
-    df_train, df_test = train_test_split(
-        data, test_size=test_size, stratify=data.label, random_state=RANDOM_STATE
-    )
-    df_train["subset"] = "train"
-    df_test["subset"] = "test"
-    dataset_name = "pge"
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
@@ -313,7 +299,7 @@ def get_trec(fine=False):
 
 
 def get_trec_fine():
-    df_train, df_test, target_names, _ = get_trec(folder, fine=True)
+    df_train, df_test, target_names, _ = get_trec(fine=True)
     dataset_name = "trec_fine"
     return df_train, df_test, target_names, dataset_name
 
@@ -475,7 +461,7 @@ def get_r8_tiny(max_sample_class=10, random_state=42):
     data["label"] = le.transform(data["class"])
     data["label_names"] = data["class"]
     data["text"] = data.text.apply(str)
-    print(data.groupby(["subset", "label_names"]).count())
+    # print(data.groupby(["subset", "label_names"]).count())
     df_train = data[data.subset == "train"].copy()
 
     # Balanceado (50 exemplos por classe)
@@ -1388,13 +1374,13 @@ datasets = [
     get_snippets,
     get_agnew,
     get_twitter_10k,
-    get_ohsumed_title,
-    get_ohsumed_root,
-    get_trec_6,
+    # get_ohsumed_title,
+    # get_ohsumed_root,
+    # get_trec_6,
     get_mpqa,
     get_tag_my_news,
     get_dblp,
-    get_pge,
+    get_persent,
     # get_imdb,
     # get_twitter,
 ]
@@ -1419,7 +1405,6 @@ def best_max_lenght():
         "TREC6": 32,
         "mpqa": 16,
         "dblp": 32,
-        "pge": 398,
     }
 
 
@@ -1686,3 +1671,6 @@ def get_tiny_dataset(
     )
 
     return df_train, df_test
+
+
+# build_stats()
