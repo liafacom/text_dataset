@@ -106,8 +106,43 @@ def check_log_path(dataset_name):
         os.makedirs(caminho)
 
 
+def get_overruling():
+    """
+    Overruling
+        The Overruling dataset was created by Casetext, a company focused on legal research software. In conjunction with Casetext, we are making the dataset publicly available here.
+
+        overruling.csv is a csv file containing the full dataset for the Overruling task.
+        The first row column headers are:
+        label: Binary label, indicates whether candidate sentence is a negative (0) or positive (1) example of an overruling sentence
+        sentence1: Candidate sentence
+
+    Terms of Service
+        The Terms of Service dataset can be downloaded from the “CLAUDETTE: an Automated Detector of Potentially Unfair Clauses in Online Terms of Service” paper: https://arxiv.org/pdf/1805.01217.pdf.
+    """
+    data = pd.read_csv(f"{folder}overruling.csv")
+    data.columns = ["class", "text"]
+    data["class"] = ["positive" if c == 1 else "negative" for c in data["class"]]
+    le = preprocessing.LabelEncoder()
+    le.fit(data["class"])
+    data["label"] = le.transform(data["class"])
+    data["label_names"] = le.transform(data["class"])
+    df_train, df_test = train_test_split(
+        data,
+        test_size=TEST_SIZE,
+        stratify=data.label,
+        random_state=RANDOM_STATE,
+    )
+    df_train.reset_index(drop=True, inplace=True)
+    df_test.reset_index(drop=True, inplace=True)
+    df_train["subset"] = "train"
+    df_test["subset"] = "test"
+    dataset_name = "overruling"
+    target_names = le.classes_
+    return df_train, df_test, target_names, dataset_name
+
+
 def get_sst5():
-    # https://github.com/prrao87/fine-grained-sentiment/tree/master/data/sst
+    # https://github.com/1tangerine1day/Sentiment-Analysis/tree/master/data
     df_train = pd.read_csv(folder + "sst5/sst5_train.csv")
     df_train.columns = ["label", "text"]
     df_train["subset"] = "train"
