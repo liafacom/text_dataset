@@ -38,22 +38,24 @@ RANDOM_STATE = 0
 base_dir = os.path.dirname(os.path.abspath(__file__))  # Diretório atual deste arquivo
 folder = os.path.join(base_dir, "datasets/")
 
+
 def writing_file_sync(run, filename="wandb_sync_file_imodel.txt"):
     dir = run.dir
     parent_dir = os.path.dirname(dir)
     # Define o fuso horário de Campo Grande, MS
-    campo_grande_tz = pytz.timezone('America/Campo_Grande')
+    campo_grande_tz = pytz.timezone("America/Campo_Grande")
     # Obtém a data e hora atual no fuso horário UTC
     now_utc = datetime.now(pytz.utc)
     # Converte para o fuso horário de Campo Grande, MS
     now_campo_grande = now_utc.astimezone(campo_grande_tz)
     # Formata a data e hora com o dia da semana
-    formatted_date_time = now_campo_grande.strftime('%A, %d/%m/%Y %H:%M:%S')
+    formatted_date_time = now_campo_grande.strftime("%A, %d/%m/%Y %H:%M:%S")
 
     # print(formatted_date_time)
     with open(filename, "a") as arquivo:
         arquivo.write(f"## {formatted_date_time} - {run.config.dataset_name}\n")
         arquivo.write(f"wandb sync {parent_dir}\n")
+
 
 def get_classic4():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
@@ -65,7 +67,10 @@ def get_classic4():
     data["label"] = le.transform(data["class"])
     data["label_names"] = le.transform(data["class"])
     df_train, df_test = train_test_split(
-        data, test_size=test_classic4_size, stratify=data.label, random_state=RANDOM_STATE
+        data,
+        test_size=test_classic4_size,
+        stratify=data.label,
+        random_state=RANDOM_STATE,
     )
     df_train["subset"] = "train"
     df_test["subset"] = "test"
@@ -89,31 +94,33 @@ def get_20newsgroups():
     df = pd.concat(
         [get_df(data_train, "train"), get_df(data_test, "test")], ignore_index=True
     )
-    df_train = df[df.subset == "train"].copy() #get_df(data_train, "train")
-    df_test = df[df.subset == "test"].copy() #get_df(data_test, "test")
+    df_train = df[df.subset == "train"].copy()  # get_df(data_train, "train")
+    df_test = df[df.subset == "test"].copy()  # get_df(data_test, "test")
     dataset_name = "20newsgroups"
     return df_train, df_test, target_names, dataset_name
+
 
 def check_log_path(dataset_name):
     caminho = f"artifacts/logs/{dataset_name}"
     if not os.path.exists(caminho):
         os.makedirs(caminho)
-    
+
 
 def get_sst2():
-    #https://github.com/Mohamed2519/Text-Classification-For-SST2-dataset
+    # https://github.com/Mohamed2519/Text-Classification-For-SST2-dataset
     train = pd.read_csv(folder + "sst2/train.tsv", sep="\t", header=None)
     dev = pd.read_csv(folder + "sst2/dev.tsv", sep="\t", header=None)
     df_train = pd.concat([train, dev]).reset_index(drop=True)
-    df_train.columns = ['label', 'text']
+    df_train.columns = ["label", "text"]
     df_train["subset"] = "train"
     df_test = pd.read_csv(folder + "sst2/test.tsv", sep="\t", header=None)
-    df_test.columns = ['label', 'text']
+    df_test.columns = ["label", "text"]
     df_test["subset"] = "test"
-    
+
     dataset_name = "sst2"
     target_names = ["negative", "positive"]
     return df_train, df_test, target_names, dataset_name
+
 
 def get_bbc():
     data = pd.read_csv(folder + "bbc.csv")
@@ -133,6 +140,7 @@ def get_bbc():
     dataset_name = "bbc"
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
+
 
 def get_bbcsport():
     data = pd.read_csv(folder + "bbcsport.csv")
@@ -175,8 +183,11 @@ def get_pge(pathto):
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
+
 def get_cstr():
-    print("File with problems! Check class and text. Samples with same text and different classes!")
+    print(
+        "File with problems! Check class and text. Samples with same text and different classes!"
+    )
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
     data = pd.read_csv(folder + "CSTR.csv")
     # total 300
@@ -195,16 +206,17 @@ def get_cstr():
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
+
 def get_trec(fine=False):
     dataset_name = "trec"
-    
+
     df_train = pd.read_csv(f"{folder}trec_train.csv")
     df_test = pd.read_csv(f"{folder}trec_test.csv")
     df_train["text"] = [str(t) for t in df_train.text.values]
     df_train["subset"] = "train"
     df_test["text"] = [str(t) for t in df_test.text.values]
     df_test["subset"] = "test"
-    
+
     if fine:
         df_train["label"] = df_train["label-fine"]
         df_test["label"] = df_test["label-fine"]
@@ -213,16 +225,17 @@ def get_trec(fine=False):
         df_test["label"] = df_test["label-coarse"]
     df_train["label_names"] = df_train["label"]
     df_test["label_names"] = df_test["label"]
-    
+
     target_names = list(df_train.label_names.unique())
-    
+
     return df_train, df_test, target_names, dataset_name
+
 
 def get_trec_fine():
     df_train, df_test, target_names, _ = get_trec(folder, fine=True)
     dataset_name = "trec_fine"
     return df_train, df_test, target_names, dataset_name
-    
+
 
 def get_ohsumed():
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
@@ -260,9 +273,8 @@ def get_ohsumed():
         "C20": "Immunologic Diseases",
         "C21": "Disorders of Environmental Origin",
         "C22": "Animal Diseases",
-        "C23": "Pathological Conditions, Signs and Symptoms"
+        "C23": "Pathological Conditions, Signs and Symptoms",
     }
-
 
     data["label_names_id"] = data["class"]
     data["label_names"] = [ohsumed_classes[id] for id in data["label_names_id"]]
@@ -273,26 +285,27 @@ def get_ohsumed():
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
- 
+
 def get_snippets():
     dataset_name = "snippets"
-    
+
     df_train = pd.read_csv(f"{folder}data-web-snippets/train.txt", header=None)
-    df_train["text"] = [" ".join(t.split()[:-1])  for t in df_train[0]]
-    df_train["label_names"] = [t.split()[-1]  for t in df_train[0]]
+    df_train["text"] = [" ".join(t.split()[:-1]) for t in df_train[0]]
+    df_train["label_names"] = [t.split()[-1] for t in df_train[0]]
     df_train["subset"] = "train"
-    
+
     df_test = pd.read_csv(f"{folder}data-web-snippets/test.txt", header=None)
-    df_test["text"] = [" ".join(t.split()[:-1])  for t in df_test[0]]
-    df_test["label_names"] = [t.split()[-1]  for t in df_test[0]]
-    df_test["subset"] = "test"    
-    
+    df_test["text"] = [" ".join(t.split()[:-1]) for t in df_test[0]]
+    df_test["label_names"] = [t.split()[-1] for t in df_test[0]]
+    df_test["subset"] = "test"
+
     le = preprocessing.LabelEncoder()
     df_train["label"] = le.fit_transform(df_train["label_names"])
     df_test["label"] = le.transform(df_test["label_names"])
-    
+
     target_names = le.classes_
     return df_train, df_test, list(target_names), dataset_name
+
 
 def get_r8_double():
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
@@ -317,8 +330,9 @@ def get_r8_double():
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
+
 def get_reuters():
-    nltk.download('reuters')
+    nltk.download("reuters")
     documents = reuters.fileids()
 
     train_docs_id = list(filter(lambda doc: doc.startswith("train"), documents))
@@ -326,18 +340,21 @@ def get_reuters():
 
     train_docs = [reuters.raw(doc_id) for doc_id in train_docs_id]
     test_docs = [reuters.raw(doc_id) for doc_id in test_docs_id]
-    
+
     # Transform multilabel labels
     mlb = MultiLabelBinarizer()
-    train_labels = mlb.fit_transform([reuters.categories(doc_id) for doc_id in train_docs_id]) 
+    train_labels = mlb.fit_transform(
+        [reuters.categories(doc_id) for doc_id in train_docs_id]
+    )
     test_labels = mlb.transform([reuters.categories(doc_id) for doc_id in test_docs_id])
     df_train = pd.DataFrame({"text": train_docs})
-    df_train["label"] =  [l for l in train_labels]
+    df_train["label"] = [l for l in train_labels]
     df_test = pd.DataFrame({"text": test_docs})
     df_test["label"] = [l for l in test_labels]
     target_names = mlb.classes_
     dataset_name = "reuters"
     return df_train, df_test, target_names, dataset_name
+
 
 def get_r8():
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
@@ -361,6 +378,7 @@ def get_r8():
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
+
 def get_r8_tiny(max_sample_class=10, random_state=42):
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
     data = pd.read_csv(
@@ -376,22 +394,35 @@ def get_r8_tiny(max_sample_class=10, random_state=42):
     data["label"] = le.transform(data["class"])
     data["label_names"] = data["class"]
     data["text"] = data.text.apply(str)
-    print(data.groupby(['subset', 'label_names']).count())
+    print(data.groupby(["subset", "label_names"]).count())
     df_train = data[data.subset == "train"].copy()
-    
+
     # Balanceado (50 exemplos por classe)
-    df_train = df_train.groupby("label_names", group_keys=False).apply(
-        lambda x: x.sample(n=min(max_sample_class, len(x)), random_state=random_state)
-    ).reset_index(drop=True)
+    df_train = (
+        df_train.groupby("label_names", group_keys=False)
+        .apply(
+            lambda x: x.sample(
+                n=min(max_sample_class, len(x)), random_state=random_state
+            )
+        )
+        .reset_index(drop=True)
+    )
     df_test = data[data.subset == "test"].copy()
-    
+
     # Balanceado (50 exemplos por classe)
-    df_test = df_test.groupby("label_names", group_keys=False).apply(
-        lambda x: x.sample(n=min(max_sample_class, len(x)), random_state=random_state)
-    ).reset_index(drop=True)
+    df_test = (
+        df_test.groupby("label_names", group_keys=False)
+        .apply(
+            lambda x: x.sample(
+                n=min(max_sample_class, len(x)), random_state=random_state
+            )
+        )
+        .reset_index(drop=True)
+    )
     dataset_name = "r8_tiny"
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
+
 
 def get_r52():
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
@@ -431,6 +462,7 @@ def get_mr():
     df_test = data[data.subset == "test"].copy()
     dataset_name = "movie_review"
     return df_train, df_test, target_names, dataset_name
+
 
 def make_scores(y_true, y_pred, pred_proba, target_names, subset):
     y_true = np.array(y_true)
@@ -510,7 +542,10 @@ def get_syskillwebert():
     data["label_names"] = data["class"]
     data["text"] = data["text"].apply(str)
     df_train, df_test = train_test_split(
-        data, test_size=test_syskillwebert_size, stratify=data.label, random_state=RANDOM_STATE
+        data,
+        test_size=test_syskillwebert_size,
+        stratify=data.label,
+        random_state=RANDOM_STATE,
     )
     df_train["subset"] = "train"
     df_test["subset"] = "test"
@@ -582,14 +617,13 @@ def get_webkb():
     le.fit(df["label_names"])
     target_names = le.classes_
     df["label"] = le.transform(df["label_names"])
-    
-    df_train = df[df.subset=="train"].copy()
+
+    df_train = df[df.subset == "train"].copy()
     df_train.reset_index(drop=True, inplace=True)
-    df_test = df[df.subset=="test"].copy()
+    df_test = df[df.subset == "test"].copy()
     df_test.reset_index(drop=True, inplace=True)
     dataset_name = "webkb"
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name  # type: ignore
-
 
 
 def get_dblp():
@@ -604,13 +638,14 @@ def get_dblp():
     le.fit(df["label_names"])
     target_names = [str(c) for c in le.classes_]
     df["label"] = le.transform(df["label_names"])
-    
-    df_train = df[df.subset=="train"].copy()
+
+    df_train = df[df.subset == "train"].copy()
     df_train.reset_index(drop=True, inplace=True)
-    df_test = df[df.subset=="test"].copy()
+    df_test = df[df.subset == "test"].copy()
     df_test.reset_index(drop=True, inplace=True)
     dataset_name = "dblp"
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name  # type: ignore
+
 
 def get_ag_news():
     path_data = f"{folder}ag_news"
@@ -681,9 +716,9 @@ def get_stats(df_train, df_test, target_names, dataset_name):
     dic["#test"] = len(df_test)
     dic["#total"] = len(dataset)
     dic["#classes"] = dataset.label.nunique()
-    
+
     def get_class_coef(y, tag):
-                # Contagem das classes
+        # Contagem das classes
         class_counts = Counter(y)
         total_samples = len(y)
 
@@ -693,7 +728,10 @@ def get_stats(df_train, df_test, target_names, dataset_name):
         dic = {f"coef gini({tag})": gini}
 
         # Índice de Shannon
-        shannon_index = -sum((count / total_samples) * np.log(count / total_samples) for count in class_counts.values())
+        shannon_index = -sum(
+            (count / total_samples) * np.log(count / total_samples)
+            for count in class_counts.values()
+        )
         # print("Índice de Shannon:", shannon_index)
         dic[f"shannon index({tag})"] = shannon_index
 
@@ -704,7 +742,7 @@ def get_stats(df_train, df_test, target_names, dataset_name):
         # print("Coeficiente de Variância:", cv)
         dic[f"coef var({tag})"] = cv
         return dic
-            
+
     # Função para calcular o tamanho médio do texto
     def avg_text_length(text):
         return len(text.split())
@@ -720,7 +758,7 @@ def get_stats(df_train, df_test, target_names, dataset_name):
 
     # Adicionar coluna com tamanho do texto
     dataset["text_length"] = dataset["text"].apply(avg_text_length)
-    
+
     dic["#tokens max"] = dataset.text_length.max()
     dic["#tokens min"] = dataset.text_length.min()
 
@@ -737,7 +775,7 @@ def get_stats(df_train, df_test, target_names, dataset_name):
     percentil_95 = np.percentile(dataset["text_length"], 95)
     dic["#length 90p"] = percentil_90
     dic["#length 95p"] = percentil_95
-    
+
     # Calcular a quantidade média de textos por classe
     avg_texts_per_train = avg_texts_per_class(dataset, "label")
 
@@ -747,80 +785,79 @@ def get_stats(df_train, df_test, target_names, dataset_name):
     avg_distinct_words = dataset["distinct_words"].mean()
     dic["#mean distinct words"] = avg_distinct_words
     dic["#mean distinct words per doc"] = dataset.words.mean()
-    
+
     dataset["char_len"] = dataset["text"].str.len()
-    dic["#mean char"] = dataset["char_len"].mean() 
-    dic["#std char"] = dataset["char_len"].std() 
-    
+    dic["#mean char"] = dataset["char_len"].mean()
+    dic["#std char"] = dataset["char_len"].std()
+
     dic["#mean docs per class"] = avg_texts_per_train
-    dic["#std docs per class"] = (
-        dataset.groupby("label_names")["text"].count().std()
-    )
+    dic["#std docs per class"] = dataset.groupby("label_names")["text"].count().std()
 
     # Se quiser, você também pode calcular a média por conjunto (treino/teste)
     avg_texts_per_subset = avg_texts_per_class(dataset, "subset")
     dic["#mean docs per subset"] = avg_texts_per_subset
-    dic["#std docs per subset"] = (
-        dataset.groupby("subset")["text"].count().std()
-    )
-    
+    dic["#std docs per subset"] = dataset.groupby("subset")["text"].count().std()
+
     dic.update(get_class_coef(df_train.label.tolist(), "train"))
     dic.update(get_class_coef(dataset.label.tolist(), "all"))
 
     dic["classes"] = ", ".join([str(t) for t in target_names])
-    dic["#samples per class"] = (
-        dataset.groupby("label_names")["text"].count().to_dict()
-    )
+    dic["#samples per class"] = dataset.groupby("label_names")["text"].count().to_dict()
 
     return dic
 
+
 def get_trec_6():
     from datasets import load_dataset
+
     # Carregar o dataset
     dataset = load_dataset("CogComp/trec")
-    
+
     # Função para transformar o dataset em um DataFrame
     def convert_to_dataframe(hf_dataset, subset_name):
-        df = pd.DataFrame({
-            'text': hf_dataset['text'],
-            'label': hf_dataset['coarse_label'],
-            'subset': subset_name
-        })
+        df = pd.DataFrame(
+            {
+                "text": hf_dataset["text"],
+                "label": hf_dataset["coarse_label"],
+                "subset": subset_name,
+            }
+        )
         return df
 
     target_names = ["ABBR", "ENTY", "DESC", "HUM", "LOC", "NUM"]
     # Converter os subsets de treino e teste para DataFrames
-    train_df = convert_to_dataframe(dataset['train'], 'train')
+    train_df = convert_to_dataframe(dataset["train"], "train")
     train_df["label_names"] = [target_names[l] for l in train_df["label"]]
-    test_df = convert_to_dataframe(dataset['test'], 'test')
+    test_df = convert_to_dataframe(dataset["test"], "test")
     test_df["label_names"] = [target_names[l] for l in test_df["label"]]
     # test_df["label"] = test_df["label"]-1
-    
+
     dataset_name = "TREC6"
     # Concatenar os DataFrames
-    
 
     return train_df, test_df, target_names, dataset_name
 
 
 def get_agnew():
     import torchtext
-    data_train = torchtext.datasets.AG_NEWS(split='train')
-    data_test = torchtext.datasets.AG_NEWS(split='test')
+
+    data_train = torchtext.datasets.AG_NEWS(split="train")
+    data_test = torchtext.datasets.AG_NEWS(split="test")
     data = []
     for label, text in data_train:
         data.append([text, label, "train"])
     for label, text in data_test:
         data.append([text, label, "test"])
-    
+
     data = pd.DataFrame(data, columns=["text", "label", "subset"])
-    data['label_names'] = data['label']
-    data['label'] = data['label']-1
+    data["label_names"] = data["label"]
+    data["label"] = data["label"] - 1
     df_train = data[data.subset == "train"]
     df_test = data[data.subset == "test"]
     dataset_name = "agnews"
     target_names = ["2", "3", "1", "0"]
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name
+
 
 def get_dmozcomputers():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
@@ -834,7 +871,10 @@ def get_dmozcomputers():
     data["label_names"] = data["class"]
     data["text"] = data["text"].apply(str)
     df_train, df_test = train_test_split(
-        data, test_size=test_dmoz_computers_size, stratify=data.label, random_state=RANDOM_STATE
+        data,
+        test_size=test_dmoz_computers_size,
+        stratify=data.label,
+        random_state=RANDOM_STATE,
     )
     df_train["subset"] = "train"
     df_test["subset"] = "test"
@@ -855,7 +895,10 @@ def get_dmozscience():
     data["label_names"] = data["class"]
     data["text"] = data["text"].apply(str)
     df_train, df_test = train_test_split(
-        data, test_size=test_dmoz_computers_size, stratify=data.label, random_state=RANDOM_STATE
+        data,
+        test_size=test_dmoz_computers_size,
+        stratify=data.label,
+        random_state=RANDOM_STATE,
     )
     df_train["subset"] = "train"
     df_test["subset"] = "test"
@@ -876,7 +919,10 @@ def get_dmozhealth():
     data["label_names"] = data["class"]
     data["text"] = data["text"].apply(str)
     df_train, df_test = train_test_split(
-        data, test_size=test_dmoz_computers_size, stratify=data.label, random_state=RANDOM_STATE
+        data,
+        test_size=test_dmoz_computers_size,
+        stratify=data.label,
+        random_state=RANDOM_STATE,
     )
     df_train["subset"] = "train"
     df_test["subset"] = "test"
@@ -897,7 +943,10 @@ def get_dmozsports():
     data["label_names"] = data["class"]
     data["text"] = data["text"].apply(str)
     df_train, df_test = train_test_split(
-        data, test_size=test_dmoz_computers_size, stratify=data.label, random_state=RANDOM_STATE
+        data,
+        test_size=test_dmoz_computers_size,
+        stratify=data.label,
+        random_state=RANDOM_STATE,
     )
     df_train["subset"] = "train"
     df_test["subset"] = "test"
@@ -1023,6 +1072,7 @@ def get_toy_data():
         "toy",
     )
 
+
 dic_datasets = {
     "ohsumed": get_ohsumed,
     "r8": get_r8,
@@ -1048,22 +1098,23 @@ dic_datasets = {
     # get_imdb,
     # get_twitter,
 }
-    
+
+
 def load_text_dataset(directory):
     data = []
-    
+
     # Percorre as pastas que são as classes
     # import ipdb; ipdb.set_trace()
     for label in os.listdir(directory):
         label_path = os.path.join(directory, label)
-        
+
         # Verifica se é uma pasta
         if os.path.isdir(label_path):
             # Percorre os arquivos dentro de cada pasta
             for filename in os.listdir(label_path):
                 file_path = os.path.join(label_path, filename)
                 # Abre e lê o conteúdo do arquivo
-                with open(file_path, 'r', encoding='utf-8') as file:
+                with open(file_path, "r", encoding="utf-8") as file:
                     try:
                         lines = file.readlines()
                         title = lines[0]
@@ -1075,18 +1126,19 @@ def load_text_dataset(directory):
                         print(file_path)
                         print(e)
         # Cria o DataFrame
-    df = pd.DataFrame(data, columns=['text', 'title', 'label_names'])
-    
+    df = pd.DataFrame(data, columns=["text", "title", "label_names"])
+
     return df
+
 
 def load_text_path(directory):
     data = []
-    
+
     # Percorre as pastas que são as classes
     # import ipdb; ipdb.set_trace()
     for label in os.listdir(directory):
         label_path = os.path.join(directory, label)
-        
+
         # Verifica se é uma pasta
         if os.path.isdir(label_path):
             label = label_path.split("/")[-1]
@@ -1094,7 +1146,7 @@ def load_text_path(directory):
             for filename in os.listdir(label_path):
                 file_path = os.path.join(label_path, filename)
                 # Abre e lê o conteúdo do arquivo
-                with open(file_path, 'r', encoding='utf-8') as file:
+                with open(file_path, "r", encoding="utf-8") as file:
                     try:
                         lines = file.readlines()
                         title = lines[0]
@@ -1104,16 +1156,18 @@ def load_text_path(directory):
                     except Exception as e:
                         print(file_path)
                         print(e)
-    df = pd.DataFrame(data, columns=['text', 'title', 'label_names'])
+    df = pd.DataFrame(data, columns=["text", "title", "label_names"])
     return df
+
 
 def get_ohsumed_title():
     return get_ohsumed_root(True)
 
+
 def get_ohsumed_root(only_title=False):
     df_train = load_text_path(f"{folder}ohsumed/training")
     df_test = load_text_path(f"{folder}ohsumed/test")
-    
+
     le = preprocessing.LabelEncoder()
     le.fit(df_train["label_names"])
     df_train["label"] = le.transform(df_train["label_names"])
@@ -1125,42 +1179,44 @@ def get_ohsumed_root(only_title=False):
         df_train["text"] = df_train["text"].apply(str)
         df_test["text"] = df_test["text"].apply(str)
         dataset_name = "ohsumed_root"
-        
+
     df_test["label"] = le.transform(df_test["label_names"])
     target_names = le.classes_
     df_train["subset"] = "train"
     df_test["subset"] = "test"
-    
-    return df_train[columns_data+["title"]], df_test[columns_data+["title"]], target_names, dataset_name
+
+    return (
+        df_train[columns_data + ["title"]],
+        df_test[columns_data + ["title"]],
+        target_names,
+        dataset_name,
+    )
+
 
 def get_twitter_10k():
 
     # Baixar os dados do Twitter se ainda não tiver baixado
-    nltk.download('twitter_samples')
+    nltk.download("twitter_samples")
 
     # Carregar os dados
-    positive_tweets = twitter_samples.strings('positive_tweets.json')
-    negative_tweets = twitter_samples.strings('negative_tweets.json')
+    positive_tweets = twitter_samples.strings("positive_tweets.json")
+    negative_tweets = twitter_samples.strings("negative_tweets.json")
 
     # Criação do DataFrame
     def create_dataframe(tweets, label, subset):
-        return pd.DataFrame({
-            'text': tweets,
-            'label_names': label,
-            'subset': subset
-        })
+        return pd.DataFrame({"text": tweets, "label_names": label, "subset": subset})
 
     # Dividindo os dados em treino e teste
-    train_pos_df = create_dataframe(positive_tweets[:5000], 'positive', 'train')
-    test_pos_df = create_dataframe(positive_tweets[5000:], 'positive', 'test')
+    train_pos_df = create_dataframe(positive_tweets[:5000], "positive", "train")
+    test_pos_df = create_dataframe(positive_tweets[5000:], "positive", "test")
 
-    train_neg_df = create_dataframe(negative_tweets[:5000], 'negative', 'train')
-    test_neg_df = create_dataframe(negative_tweets[5000:], 'negative', 'test')
+    train_neg_df = create_dataframe(negative_tweets[:5000], "negative", "train")
+    test_neg_df = create_dataframe(negative_tweets[5000:], "negative", "test")
 
     # Concatenando todos os DataFrames
     df_train = pd.concat([train_pos_df, train_neg_df]).reset_index(drop=True)
     df_test = pd.concat([test_pos_df, test_neg_df]).reset_index(drop=True)
-    
+
     le = preprocessing.LabelEncoder()
     le.fit(df_train["label_names"])
     df_train["label"] = le.transform(df_train["label_names"])
@@ -1170,12 +1226,13 @@ def get_twitter_10k():
 
     return df_train, df_test, target_names, dataset_name
 
+
 def get_tag_my_news():
 
     # Exemplo de uso:
     directory_path = f"{folder}tag_my_news"
     data = load_text_dataset(directory_path)
-    
+
     # total 16207
     le = preprocessing.LabelEncoder()
     le.fit(data["label_names"])
@@ -1189,6 +1246,7 @@ def get_tag_my_news():
     dataset_name = "tag_my_news"
     target_names = le.classes_
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name
+
 
 def get_mpqa():
     data = pd.read_csv(f"{folder}mpqa/mpqa.txt", header=None, sep="\t")
@@ -1209,15 +1267,21 @@ def get_mpqa():
     target_names = le.classes_
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name
 
+
 def get_split(df_full, config, target_names):
     if config.train_size_p * len(df_full) > len(target_names):
-        df_train, df_val = train_test_split(df_full, train_size=config.train_size_p,
-                                            random_state=config.exp_number,
-                                            stratify=df_full.label)
+        df_train, df_val = train_test_split(
+            df_full,
+            train_size=config.train_size_p,
+            random_state=config.exp_number,
+            stratify=df_full.label,
+        )
     else:
-        df_train, df_val = train_test_split(df_full, train_size=config.train_size_p,
-                                            random_state=config.exp_number)
+        df_train, df_val = train_test_split(
+            df_full, train_size=config.train_size_p, random_state=config.exp_number
+        )
     return df_train, df_val
+
 
 datasets = [
     get_ohsumed,
@@ -1225,7 +1289,8 @@ datasets = [
     get_r8_tiny,
     get_r52,
     get_mr,
-    get_sst2, 
+    get_sst2,
+    get_sst5,
     get_20newsgroups,
     get_cstr,
     get_syskillwebert,
@@ -1253,6 +1318,7 @@ datasets = [
     # get_twitter,
 ]
 
+
 def best_max_lenght():
     return {
         "cstr": 288,
@@ -1272,9 +1338,10 @@ def best_max_lenght():
         "TREC6": 32,
         "mpqa": 16,
         "dblp": 32,
-        "pge": 398
+        "pge": 398,
     }
-    
+
+
 def setting_config(dataset, config, perc=0.01):
     if perc == 0.01:
         config = setting_config_001(dataset, config)
@@ -1286,71 +1353,73 @@ def setting_config(dataset, config, perc=0.01):
         config = setting_config_020(dataset, config)
     return config
 
+
 def setting_config_001(dataset, config):
     config["proj"] = "TC-Semisup-Setup-C"
-    config["join_train_test"]=True
-    config["compl_size"]=0
-    config["val_size"]=1000
+    config["join_train_test"] = True
+    config["compl_size"] = 0
+    config["val_size"] = 1000
     if dataset == "ohsumed":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 207
-        config["test_size"]=6193
+        config["test_size"] = 6193
     elif dataset == "r8":
         # 80 samples - 0.01%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 80
-        config["test_size"]=6594
+        config["test_size"] = 6594
     elif dataset == "agnews":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 40
-        config["test_size"]=6960
+        config["test_size"] = 6960
     elif dataset == "snippets":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 64
-        config["test_size"]=11276
+        config["test_size"] = 11276
     elif dataset == "dblp":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 120
-        config["test_size"]=22880
+        config["test_size"] = 22880
     elif dataset == "20newsgroups":
-        config["train_size_per_class"]=True
+        config["train_size_per_class"] = True
         config["sampling_train"] = 10
-        config["test_size"]=17646
+        config["test_size"] = 17646
     elif dataset == "TREC6":
-        config["train_size_per_class"]=True
+        config["train_size_per_class"] = True
         config["sampling_train"] = 10
-        config["test_size"]=4940
+        config["test_size"] = 4940
     return config
+
 
 def setting_config_005(dataset, config):
     config["proj"] = "TC-Semisup-Setup-C"
-    config["join_train_test"]=True
-    config["compl_size"]=0
-    config["val_size"]=1000
+    config["join_train_test"] = True
+    config["compl_size"] = 0
+    config["val_size"] = 1000
     if dataset == "ohsumed":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 370
-        config["test_size"]=6030
+        config["test_size"] = 6030
     elif dataset == "r8":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 383
-        config["test_size"]=6291
+        config["test_size"] = 6291
     elif dataset == "snippets":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 617
-        config["test_size"]=10723
+        config["test_size"] = 10723
     elif dataset == "dblp":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 1200
-        config["test_size"]=21800
+        config["test_size"] = 21800
     elif dataset == "TREC6":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 300
-        config["test_size"]=4700
+        config["test_size"] = 4700
     elif dataset == "agnews":
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 400
-        config["test_size"]=6600
+        config["test_size"] = 6600
     elif dataset == "20newsgroups":
         assert 1 == 0, "dataset not config"
         # config["train_size_per_class"]=True
@@ -1358,141 +1427,144 @@ def setting_config_005(dataset, config):
         # config["test_size"]=17646
     return config
 
+
 def setting_config_020(dataset, config):
     config["proj"] = "TC-Semisup-Setup-C"
-    config["join_train_test"]=True
-    config["compl_size"]=0
-    config["val_size"]=1000
+    config["join_train_test"] = True
+    config["compl_size"] = 0
+    config["val_size"] = 1000
     if dataset == "ohsumed":
         # 0.2%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 1480
-        config["test_size"]=4920
+        config["test_size"] = 4920
     elif dataset == "r8":
         # 0.2%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 1534
-        config["test_size"]=5139
+        config["test_size"] = 5139
     elif dataset == "snippets":
         # 0.2%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 2468
-        config["test_size"]=8872
+        config["test_size"] = 8872
     elif dataset == "TREC6":
         # 0.2%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 1200
-        config["test_size"]=3800
+        config["test_size"] = 3800
     elif dataset == "dblp":
         # 0.2%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 4800
-        config["test_size"]=18200
+        config["test_size"] = 18200
     elif dataset == "agnews":
         # 0.2%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 1600
-        config["test_size"]=5400
+        config["test_size"] = 5400
     elif dataset == "20newsgroups":
-        config["train_size_per_class"]=True
+        config["train_size_per_class"] = True
         config["sampling_train"] = 10
-        config["test_size"]=17646
+        config["test_size"] = 17646
     return config
 
 
 def setting_config_010(dataset, config):
     config["proj"] = "TC-Semisup-Setup-C"
-    config["join_train_test"]=True
-    config["compl_size"]=0
-    config["val_size"]=1000
+    config["join_train_test"] = True
+    config["compl_size"] = 0
+    config["val_size"] = 1000
     if dataset == "ohsumed":
         # 0.1%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 740
-        config["test_size"]=5660
+        config["test_size"] = 5660
     elif dataset == "r8":
         # 0.1%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 767
-        config["test_size"]=5907
+        config["test_size"] = 5907
     elif dataset == "agnews":
         # 0.1%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 800
-        config["test_size"]=6200
+        config["test_size"] = 6200
     elif dataset == "snippets":
         # 0.1%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 1234
-        config["test_size"]=10106
+        config["test_size"] = 10106
     elif dataset == "dblp":
         # 0.1%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 2400
-        config["test_size"]=20600
+        config["test_size"] = 20600
     elif dataset == "20newsgroups":
-        config["train_size_per_class"]=True
+        config["train_size_per_class"] = True
         config["sampling_train"] = 10
-        config["test_size"]=17646
+        config["test_size"] = 17646
     elif dataset == "TREC6":
         # 0.1%
-        config["train_size_per_class"]=False
+        config["train_size_per_class"] = False
         config["sampling_train"] = 600
-        config["test_size"]=4400
+        config["test_size"] = 4400
     return config
+
 
 def choose_setup(name, dataset, perc=0.01):
     config = {}
     if name == "A":
         config["proj"] = "TC-Semisup-Setup-A"
-        config["join_train_test"]=True
-        config["train_size_per_class"]=True
+        config["join_train_test"] = True
+        config["train_size_per_class"] = True
         config["sampling_train"] = 20
-        config["compl_size"]=1000
+        config["compl_size"] = 1000
         if dataset == "tag_my_news":
-            config["val_size"]=140
-            config["test_size"]=31269
+            config["val_size"] = 140
+            config["test_size"] = 31269
         elif dataset == "snippets":
-            config["val_size"]=160
-            config["test_size"]=11020
+            config["val_size"] = 160
+            config["test_size"] = 11020
         elif dataset == "ohsumed_root_title":
-            config["val_size"]=419
-            config["test_size"]=5502
+            config["val_size"] = 419
+            config["test_size"] = 5502
         elif dataset == "movie_review":
-            config["val_size"]=40
-            config["test_size"]=3554
+            config["val_size"] = 40
+            config["test_size"] = 3554
         elif dataset == "twitter_10k":
-            config["val_size"]=40
-            config["test_size"]=8920
+            config["val_size"] = 40
+            config["test_size"] = 8920
     elif name == "C":
         config = setting_config(dataset, config, perc=perc)
     elif name == "B":
         config["proj"] = "TC-Semisup-Setup-B"
-        config["join_train_test"]=True
-        config["compl_size"]=0
-        config["val_size"]=1000
+        config["join_train_test"] = True
+        config["compl_size"] = 0
+        config["val_size"] = 1000
         if dataset == "mpqa":
-            config["train_size_per_class"]=True
+            config["train_size_per_class"] = True
             config["sampling_train"] = 10
-            config["test_size"]=9583
+            config["test_size"] = 9583
         elif dataset == "agnews":
-            config["train_size_per_class"]=True
+            config["train_size_per_class"] = True
             config["sampling_train"] = 10
-            config["test_size"]=6960
+            config["test_size"] = 6960
         elif dataset == "TREC6":
-            config["train_size_per_class"]=True
+            config["train_size_per_class"] = True
             config["sampling_train"] = 10
-            config["test_size"]=4940
-        
+            config["test_size"] = 4940
+
     return config
+
 
 def build_stats(datasets=datasets):
     stats = []
     for func in tqdm(datasets):
         stats.append(get_stats(*func()))
-        
+
     datasets_stats = pd.DataFrame(stats)
-    format_2_decimals = lambda x: f'{x:.2f}' if isinstance(x, (int, float)) else x
+    format_2_decimals = lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x
     # Aplicar a função a todas as colunas numéricas
     datasets_stats = datasets_stats.map(format_2_decimals)
     datasets_stats.to_csv("dataset_stats.csv", index=False)
@@ -1500,20 +1572,36 @@ def build_stats(datasets=datasets):
     datasets_stats.to_markdown("dataset_stats.md", index=False)
     datasets_stats.to_html("dataset_stats.html", index=False)
 
+
 # build_stats()
 
-def get_tiny_dataset(df_train, df_test, max_sample_class=10, random_state=42, keep_test=False):
+
+def get_tiny_dataset(
+    df_train, df_test, max_sample_class=10, random_state=42, keep_test=False
+):
     # Balanceado (10 exemplos por classe)
-    df_train = df_train.groupby("label", group_keys=False).apply(
-        lambda x: x.sample(n=min(max_sample_class, len(x)), random_state=random_state)
-    ).reset_index(drop=True)
-        
+    df_train = (
+        df_train.groupby("label", group_keys=False)
+        .apply(
+            lambda x: x.sample(
+                n=min(max_sample_class, len(x)), random_state=random_state
+            )
+        )
+        .reset_index(drop=True)
+    )
+
     if keep_test:
         return df_train, df_test
-        
+
     # Balanceado (10 exemplos por classe)
-    df_test = df_test.groupby("label", group_keys=False).apply(
-        lambda x: x.sample(n=min(max_sample_class, len(x)), random_state=random_state)
-    ).reset_index(drop=True)
-    
+    df_test = (
+        df_test.groupby("label", group_keys=False)
+        .apply(
+            lambda x: x.sample(
+                n=min(max_sample_class, len(x)), random_state=random_state
+            )
+        )
+        .reset_index(drop=True)
+    )
+
     return df_train, df_test
