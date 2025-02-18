@@ -32,6 +32,8 @@ Os seguintes datasets podem ser carregados:
 - `get_mr`
 - `get_agnews`
 - `get_sst2`
+- `get_sst5`
+- `get_overruling`
 
 ### Obtendo um Dataset Reduzido
 
