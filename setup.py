@@ -32,6 +32,7 @@ setup(
             "datasets/data-web-snippets/*.txt",
             "datasets/mpqa/*.txt",
             "datasets/sst2/*.tsv",
+            "datasets/sst5/*.csv",
             "datasets/tag_my_news/business/*.txt",
             "datasets/tag_my_news/entertainment/*.txt",
             "datasets/tag_my_news/health/*.txt",
@@ -39,6 +40,6 @@ setup(
             "datasets/tag_my_news/sport/*.txt",
             "datasets/tag_my_news/us/*.txt",
             "datasets/tag_my_news/world/*.txt",
-            ],  # Inclui os arquivos de datasets
+        ],  # Inclui os arquivos de datasets
     },
 )

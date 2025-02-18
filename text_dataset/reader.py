@@ -106,6 +106,20 @@ def check_log_path(dataset_name):
         os.makedirs(caminho)
 
 
+def get_sst5():
+    # https://github.com/prrao87/fine-grained-sentiment/tree/master/data/sst
+    df_train = pd.read_csv(folder + "sst5/sst5_train.csv")
+    df_train.columns = ["label", "text"]
+    df_train["subset"] = "train"
+    df_test = pd.read_csv(folder + "sst5/sst5_test.csv")
+    df_test.columns = ["label", "text"]
+    df_test["subset"] = "test"
+
+    dataset_name = "sst5"
+    target_names = ["1", "2", "3", "4", "5"]
+    return df_train, df_test, target_names, dataset_name
+
+
 def get_sst2():
     # https://github.com/Mohamed2519/Text-Classification-For-SST2-dataset
     train = pd.read_csv(folder + "sst2/train.tsv", sep="\t", header=None)
