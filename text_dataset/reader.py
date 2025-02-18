@@ -99,6 +99,22 @@ def check_log_path(dataset_name):
     if not os.path.exists(caminho):
         os.makedirs(caminho)
     
+
+def get_sst2():
+    #https://github.com/Mohamed2519/Text-Classification-For-SST2-dataset
+    train = pd.read_csv(folder + "sst2/train.tsv", sep="\t", header=None)
+    dev = pd.read_csv(folder + "sst2/dev.tsv", sep="\t", header=None)
+    df_train = pd.concat([train, dev]).reset_index(drop=True)
+    df_train.columns = ['label', 'text']
+    df_train["subset"] = "train"
+    df_test = pd.read_csv(folder + "sst2/test.tsv", sep="\t", header=None)
+    df_test.columns = ['label', 'text']
+    df_test["subset"] = "test"
+    
+    dataset_name = "sst2"
+    target_names = ["negative", "positive"]
+    return df_train, df_test, target_names, dataset_name
+
 def get_bbc():
     data = pd.read_csv(folder + "bbc.csv")
     data["class"] = data.label
@@ -1013,6 +1029,7 @@ dic_datasets = {
     "r8_tiny": get_r8_tiny,
     "r52": get_r52,
     "mr": get_mr,
+    "sst2": get_sst2,
     "20news": get_20newsgroups,
     "cstr": get_cstr,
     "syskillwebert": get_syskillwebert,
@@ -1208,6 +1225,7 @@ datasets = [
     get_r8_tiny,
     get_r52,
     get_mr,
+    get_sst2, 
     get_20newsgroups,
     get_cstr,
     get_syskillwebert,
@@ -1243,6 +1261,7 @@ def best_max_lenght():
         "r52": 256,
         "ohsumed": 288,
         "movie_review": 64,
+        "sst2": 64,
         "20newsgroups": 512,
         "agnews": 64,
         "snippets": 64,
