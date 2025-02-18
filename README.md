@@ -27,13 +27,14 @@ Os seguintes datasets podem ser carregados:
 - `get_ohsumed`
 - `get_r8`
 - `get_r52`
-- `get_20newsgroups`
-- `get_snippets`
-- `get_mr`
-- `get_agnews`
-- `get_sst2`
-- `get_sst5`
-- `get_overruling`
+- `get_20newsgroups` - news classification
+- `get_snippets` - news classification
+- `get_agnews` - news classification
+- `get_mr` - sentiment analysis
+- `get_sst2` - sentiment analysis
+- `get_sst5` - sentiment analysis
+- `get_overruling` - sentiment analysis
+- `get_persent` - sentiment analysis
 
 ### Obtendo um Dataset Reduzido
 

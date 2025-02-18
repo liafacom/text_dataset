@@ -106,6 +106,33 @@ def check_log_path(dataset_name):
         os.makedirs(caminho)
 
 
+def todo():
+    # https://competitions.codalab.org/competitions/20629#learn_the_details-evaluation
+    return
+
+
+def get_persent():
+    train = pd.read_csv(folder + "per_sen_t/train.csv")
+    dev = pd.read_csv(folder + "per_sen_t/dev.csv")
+    df_train = pd.concat([train, dev]).reset_index(drop=True)
+    df_train = df_train[["TRUE_SENTIMENT", "DOCUMENT"]]
+    df_train.columns = ["label_names", "text"]
+    df_train["subset"] = "train"
+    df_test = pd.read_csv(folder + "per_sen_t/fixed_test.csv")
+    df_test = df_test[["TRUE_SENTIMENT", "DOCUMENT"]]
+    df_test.columns = ["label_names", "text"]
+    df_test["subset"] = "test"
+
+    le = preprocessing.LabelEncoder()
+    le.fit(df_train["label_names"])
+    df_train["label"] = le.transform(df_train["label_names"])
+    df_test["label"] = le.transform(df_test["label_names"])
+    target_names = le.classes_
+
+    dataset_name = "persent"
+    return df_train, df_test, target_names, dataset_name
+
+
 def get_overruling():
     """
     Overruling
@@ -118,6 +145,11 @@ def get_overruling():
 
     Terms of Service
         The Terms of Service dataset can be downloaded from the “CLAUDETTE: an Automated Detector of Potentially Unfair Clauses in Online Terms of Service” paper: https://arxiv.org/pdf/1805.01217.pdf.
+    Extract from:
+        https://docs.google.com/document/d/1K3LtZ5Z6Zxh9Xuf5Pu0P4UuPXa_rCuE6b2_gL1yLej8/edit?tab=t.0
+        https://drive.google.com/drive/folders/18YZpKNzbgG3ZWWgmu0Xz6oK3nuv0M2iK
+        https://paperswithcode.com/dataset/overruling
+        https://github.com/reglab/casehold
     """
     data = pd.read_csv(f"{folder}overruling.csv")
     data.columns = ["class", "text"]
@@ -126,6 +158,7 @@ def get_overruling():
     le.fit(data["class"])
     data["label"] = le.transform(data["class"])
     data["label_names"] = le.transform(data["class"])
+    target_names = le.classes_
     df_train, df_test = train_test_split(
         data,
         test_size=TEST_SIZE,
@@ -137,7 +170,6 @@ def get_overruling():
     df_train["subset"] = "train"
     df_test["subset"] = "test"
     dataset_name = "overruling"
-    target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
 

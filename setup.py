@@ -33,6 +33,7 @@ setup(
             "datasets/mpqa/*.txt",
             "datasets/sst2/*.tsv",
             "datasets/sst5/*.csv",
+            "datasets/per_sen_t/*.csv",
             "datasets/tag_my_news/business/*.txt",
             "datasets/tag_my_news/entertainment/*.txt",
             "datasets/tag_my_news/health/*.txt",
