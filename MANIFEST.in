@@ -1,3 +1,4 @@
+include text_dataset/artifacts/*
 include text_dataset/datasets/*.csv
 include text_dataset/datasets/*.meta
 include text_dataset/datasets/*.txt

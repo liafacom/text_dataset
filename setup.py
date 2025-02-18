@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="text_dataset",
-    version="0.1.7",
+    version="0.1.8",
     author="Eliton Perin",
     author_email="elitonperin@gmail.com",
     description="Wrapper para centralizar e facilitar o acesso a datasets.",
@@ -26,6 +26,7 @@ setup(
     include_package_data=True,  # Inclui arquivos não-Python
     package_data={
         "text_dataset": [
+            "artifacts/*",
             "datasets/*.csv",
             "datasets/*.meta",
             "datasets/*.txt",

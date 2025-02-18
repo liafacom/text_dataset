@@ -1395,6 +1395,7 @@ def best_max_lenght():
         "ohsumed": 288,
         "movie_review": 64,
         "sst2": 64,
+        "sst5": 64,
         "20newsgroups": 512,
         "agnews": 64,
         "snippets": 64,
@@ -1405,6 +1406,7 @@ def best_max_lenght():
         "TREC6": 32,
         "mpqa": 16,
         "dblp": 32,
+        "persent": 512,
     }
 
 
