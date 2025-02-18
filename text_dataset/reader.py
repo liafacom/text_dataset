@@ -1381,6 +1381,7 @@ datasets = [
     get_tag_my_news,
     get_dblp,
     get_persent,
+    get_overruling,
     # get_imdb,
     # get_twitter,
 ]
@@ -1407,6 +1408,7 @@ def best_max_lenght():
         "mpqa": 16,
         "dblp": 32,
         "persent": 512,
+        "overruling": 64,
     }
 
 
@@ -1675,4 +1677,4 @@ def get_tiny_dataset(
     return df_train, df_test
 
 
-# build_stats()
+build_stats()
