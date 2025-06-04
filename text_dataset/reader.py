@@ -108,7 +108,42 @@ def check_log_path(dataset_name):
 
 def todo():
     # https://competitions.codalab.org/competitions/20629#learn_the_details-evaluation
+    # https://github.com/iabufarha/iSarcasmEval
+    # https://paperswithcode.com/dataset/subjqa
+    # https://paperswithcode.com/dataset/retweet
+    # https://github.com/EdinburghNLP/spot-data/blob/master/data/spot-imdb-edus.txt
+    # https://paperswithcode.com/dataset/twitter-us-airline-sentiment https://huggingface.co/datasets/osanseviero/twitter-airline-sentiment
+    # https://www.geeksforgeeks.org/dataset-for-sentiment-analysis/
+    # https://huggingface.co/datasets/mltrev23/financial-sentiment-analysis
+    # https://semeval.github.io/
     return
+
+def get_isarcasm():
+    """
+    iSarcasmEval 2022
+    Extract from:
+    https://github.com/iabufarha/iSarcasmEval
+    https://sites.google.com/view/semeval2022-isarcasmeval/home
+    https://semeval.github.io/
+    """
+    
+    train = pd.read_csv(folder + "iSarcasm/train.EN.csv")
+    df_train = train[["tweet","sarcastic" #,rephrase,sarcasm,irony,satire,understatement,overstatement,rhetorical_question"
+                      ]]
+    df_train.columns = ["text", "label"]
+    df_train["subset"] = "train"
+    df_test = pd.read_csv(folder + "iSarcasm/task_A_En_test.csv")
+    df_test = df_test[["tweet","sarcastic"]]
+    df_test.columns = ["text", "label"]
+    df_test["subset"] = "test"
+    
+    target_names = ["1", "2"]
+    df_train["label_names"] = [target_names[c] for c in df_train.label]
+    df_test["label_names"] = [target_names[c] for c in df_test.label]
+    
+    dataset_name = "isarcasm"
+    return df_train, df_test, target_names, dataset_name
+        
 
 
 def get_persent():
