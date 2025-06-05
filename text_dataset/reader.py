@@ -660,6 +660,26 @@ def get_syskillwebert():
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name
 
 
+def get_twitter_mansoura():
+    """Twitter Mansoura Dataset
+    Extract from: https://data.mendeley.com/datasets/z9zw7nt5h2/1
+
+    Published: 13 May 2021
+    Version 1
+    DOI: 10.17632/z9zw7nt5h2.1
+    Contributor: SHERIF HUSSEIN
+    """
+
+    return
+
+
+def get_twitter_financial_news():
+    """
+    https://huggingface.co/datasets/zeroshot/twitter-financial-news-sentiment
+    """
+    return
+
+
 def get_twitter():
     # Dataset source: https://github.com/ragero/text-collections/tree/master/complete_texts_csvs
     dn = [
@@ -1390,39 +1410,40 @@ def get_split(df_full, config, target_names):
 
 
 datasets = [
-    get_ohsumed,
-    get_r8,
-    get_r8_tiny,
-    get_r52,
-    get_mr,
-    get_sst2,
-    get_sst5,
-    get_20newsgroups,
-    get_cstr,
-    get_syskillwebert,
-    get_dmozscience,
-    get_dmozhealth,
-    get_classic4,
-    get_trec_fine,
-    get_trec,
-    get_toy_data,
-    get_webkb,
-    get_dmozcomputers,
-    get_dmozsports,
-    get_nsf,
-    get_snippets,
-    get_agnew,
-    get_twitter_10k,
-    # get_ohsumed_title,
-    # get_ohsumed_root,
-    # get_trec_6,
-    get_mpqa,
-    get_tag_my_news,
-    get_dblp,
-    get_persent,
-    get_overruling,
+    # get_ohsumed,
+    # get_r8,
+    # get_r8_tiny,
+    # get_r52,
+    # get_mr,
+    # get_sst2,
+    # get_sst5,
+    # get_20newsgroups,
+    # get_cstr,
+    # get_syskillwebert,
+    # get_dmozscience,
+    # get_dmozhealth,
+    # get_classic4,
+    # get_trec_fine,
+    # get_trec,
+    # get_toy_data,
+    # get_webkb,
+    # get_dmozcomputers,
+    # get_dmozsports,
+    # get_nsf,
+    # get_snippets,
+    # get_agnew,
+    # get_twitter_10k,
+    # # get_ohsumed_title,
+    # # get_ohsumed_root,
+    # # get_trec_6,
+    # get_mpqa,
+    # get_tag_my_news,
+    # get_dblp,
+    # get_persent,
+    # get_overruling,
     # get_imdb,
-    # get_twitter,
+    get_twitter,
+    get_isarcasm,
 ]
 
 
@@ -1716,4 +1737,4 @@ def get_tiny_dataset(
     return df_train, df_test
 
 
-# build_stats()
+build_stats()

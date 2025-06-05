@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="text_dataset",
-    version="0.1.10",
+    version="0.1.11",
     author="Eliton Perin",
     author_email="elitonperin@gmail.com",
     description="Wrapper para centralizar e facilitar o acesso a datasets.",
@@ -35,6 +35,7 @@ setup(
             "datasets/sst2/*.tsv",
             "datasets/sst5/*.csv",
             "datasets/per_sen_t/*.csv",
+            "datasets/iSarcasm/*.csv",
             "datasets/tag_my_news/business/*.txt",
             "datasets/tag_my_news/entertainment/*.txt",
             "datasets/tag_my_news/health/*.txt",

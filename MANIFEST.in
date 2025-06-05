@@ -5,6 +5,7 @@ include text_dataset/datasets/*.txt
 include text_dataset/datasets/sst2/*.tsv"
 include text_dataset/datasets/sst5/*.csv"
 include text_dataset/datasets/per_sen_t/*.csv"
+include text_dataset/datasets/iSarcasm/*.csv"
 include text_dataset/datasets/data-web-snippets/*.txt
 include text_dataset/datasets/mpqa/*.txt
 include text_dataset/datasets/tag_my_news/business/*.txt
