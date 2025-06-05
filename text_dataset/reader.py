@@ -118,6 +118,7 @@ def todo():
     # https://semeval.github.io/
     return
 
+
 def get_isarcasm():
     """
     iSarcasmEval 2022
@@ -126,24 +127,27 @@ def get_isarcasm():
     https://sites.google.com/view/semeval2022-isarcasmeval/home
     https://semeval.github.io/
     """
-    
-    train = pd.read_csv(folder + "iSarcasm/train.EN.csv")
-    df_train = train[["tweet","sarcastic" #,rephrase,sarcasm,irony,satire,understatement,overstatement,rhetorical_question"
-                      ]]
+
+    train = pd.read_csv(folder + "iSarcasm/train.En.csv")
+    df_train = train[
+        [
+            "tweet",
+            "sarcastic",  # ,rephrase,sarcasm,irony,satire,understatement,overstatement,rhetorical_question"
+        ]
+    ]
     df_train.columns = ["text", "label"]
     df_train["subset"] = "train"
     df_test = pd.read_csv(folder + "iSarcasm/task_A_En_test.csv")
-    df_test = df_test[["tweet","sarcastic"]]
+    df_test = df_test[["text", "sarcastic"]]
     df_test.columns = ["text", "label"]
     df_test["subset"] = "test"
-    
-    target_names = ["1", "2"]
+
+    target_names = ["no sarcastic", "sarcastic"]
     df_train["label_names"] = [target_names[c] for c in df_train.label]
     df_test["label_names"] = [target_names[c] for c in df_test.label]
-    
+
     dataset_name = "isarcasm"
     return df_train, df_test, target_names, dataset_name
-        
 
 
 def get_persent():
