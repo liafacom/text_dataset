@@ -20,6 +20,7 @@ from tqdm import tqdm
 import pandas as pd
 import nltk
 from nltk.corpus import twitter_samples
+from datasets import load_dataset
 
 # Definir as stopwords em português (ou altere para o idioma do seu dataset)
 nltk.download("punkt")
@@ -118,6 +119,67 @@ def todo():
     # https://semeval.github.io/
     return
 
+def get_poem_sentiment():
+    """
+    google-research-datasets/poem_sentiment
+    Extract from:
+    https://huggingface.co/datasets/google-research-datasets/poem_sentiment
+    """
+    
+    dataset_dict = load_dataset("google-research-datasets/poem_sentiment", trust_remote_code=True)
+
+    # Converte cada split em um DataFrame
+    df = pd.concat([dataset_dict["train"].to_pandas(), dataset_dict["validation"].to_pandas()])
+    df["text"] = df["verse_text"]
+    target_names = ["negative", "positive", "no_impact", "mixed"]
+    df["label_names"] = [target_names[l] for l in df["label"]]
+    df = df[["text", "label", "label_names"]]
+
+    df_train = df.reset_index(drop=True).copy()
+    df_train["subset"] = "train"
+    
+    df_test = dataset_dict["test"].to_pandas()
+    df_test["text"] = df_test["verse_text"]
+    target_names = ["negative", "positive", "no_impact", "mixed"]
+    df_test["label_names"] = [target_names[l] for l in df_test["label"]]
+    df_test = df_test[["text", "label", "label_names"]]
+    
+    df_test = df_test.reset_index(drop=True)
+    df_test["subset"] = "test"
+    dataset_name = "poem_sentiment"
+    return df_train, df_test, target_names, dataset_name
+
+
+def get_twitter_airline_sentiment():
+    """
+    Twitter US Airline Sentiment
+    Extract from:
+    https://huggingface.co/datasets/osanseviero/twitter-airline-sentiment
+    https://www.kaggle.com/crowdflower/twitter-airline-sentiment
+    """
+    
+    dataset_dict = load_dataset("osanseviero/twitter-airline-sentiment", trust_remote_code=True)
+
+    # Converte cada split em um DataFrame
+    df = dataset_dict["train"].to_pandas()
+    target_names = ["negative", "neutral", "positive"]
+    df["label_names"] = df["airline_sentiment"]
+    df["label"] = df["airline_sentiment"].apply(lambda x: target_names.index(x))
+    df = df[["text", "label", "label_names"]]
+
+    df_train, df_test = train_test_split(
+        df,
+        test_size=TEST_SIZE,
+        stratify=df.label,
+        random_state=RANDOM_STATE,
+    )
+    df_train = df_train.reset_index(drop=True)
+    df_test = df_test.reset_index(drop=True)
+    df_train["subset"] = "train"
+    df_test["subset"] = "test"
+    dataset_name = "twitter_airline_sentiment"
+    return df_train, df_test, target_names, dataset_name
+
 
 def get_isarcasm():
     """
@@ -136,10 +198,12 @@ def get_isarcasm():
         ]
     ]
     df_train.columns = ["text", "label"]
+    df_train = df_train.dropna(subset=["text", "label"]).reset_index(drop=True)
     df_train["subset"] = "train"
     df_test = pd.read_csv(folder + "iSarcasm/task_A_En_test.csv")
     df_test = df_test[["text", "sarcastic"]]
     df_test.columns = ["text", "label"]
+    df_test = df_test.dropna(subset=["text", "label"]).reset_index(drop=True)
     df_test["subset"] = "test"
 
     target_names = ["no sarcastic", "sarcastic"]
@@ -1442,8 +1506,10 @@ datasets = [
     # get_persent,
     # get_overruling,
     # get_imdb,
-    get_twitter,
+    # get_twitter,
     get_isarcasm,
+    get_twitter_airline_sentiment,
+    get_poem_sentiment,
 ]
 
 
@@ -1469,6 +1535,9 @@ def best_max_lenght():
         "dblp": 32,
         "persent": 512,
         "overruling": 64,
+        "isarcasm": 64,
+        "twitter_airline_sentiment": 32,
+        "poem_sentiment": 32,
     }
 
 
@@ -1737,4 +1806,4 @@ def get_tiny_dataset(
     return df_train, df_test
 
 
-build_stats()
+# build_stats()

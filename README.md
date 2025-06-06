@@ -24,21 +24,24 @@ df_train, df_test, labels_name, dataset_name = get_r8()
 
 Os seguintes datasets podem ser carregados:
 
-- `get_ohsumed`
-- `get_r8`
-- `get_r52`
-- `get_cstr`
-- `get_dblp`
-- `get_mpqa`
-- `get_TREC6`
-- `get_20newsgroups` - news classification
-- `get_snippets` - news classification
-- `get_agnews` - news classification
+- `get_ohsumed` - medical
+- `get_r8` - news
+- `get_r52` - news
+- `get_20newsgroups` - news 
+- `get_agnews` - news 
+- `get_cstr` - computing
+- `get_dblp` - scientific
+- `get_snippets` - questions
+- `get_mpqa` - questions
+- `get_TREC6` - questions
+- `get_overruling` - law
 - `get_mr` - sentiment analysis
 - `get_sst2` - sentiment analysis
 - `get_sst5` - sentiment analysis
-- `get_overruling` - sentiment analysis
 - `get_persent` - sentiment analysis
+- `get_poem_sentiment` - sentiment analysis
+- `get_twitter_airline_sentiment` - sentiment analysis
+- `get_isarcasm` - sarcasm
 
 ### Obtendo um Dataset Reduzido
 
