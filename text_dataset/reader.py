@@ -867,13 +867,13 @@ def get_sentiment140(samples_train=5000):
 
     # Converte cada split em um DataFrame
     df = pd.concat([dataset_dict["train"].to_pandas()])
-    if samples_train > len(df):
-        samples_train = len(df)
-    _, df = train_test_split(df, test_size=samples_train, stratify=df["sentiment"], random_state=RANDOM_STATE)
-    target_names = ["positive", "neutral", "negative"]
     df["label"] = df["sentiment"]
     l2c = {0: 2, 4: 0, 2: 1}  # sentiment to label
     df["label"] = df["label"].map(l2c)
+    if samples_train > len(df):
+        samples_train = len(df)
+    _, df = train_test_split(df, test_size=samples_train, stratify=df["label"], random_state=RANDOM_STATE)
+    target_names = ["positive", "neutral", "negative"]
     df["label_names"] = [target_names[lab] for lab in df["label"]]
     df = df[["text", "label", "label_names"]]
 
@@ -1573,7 +1573,7 @@ datasets = [
     # get_persent,
     # get_overruling,
     # get_imdb,
-    # get_sentiment140,
+    get_sentiment140,
     # get_twitter,
     # get_isarcasm,
     # get_twitter_airline_sentiment,
@@ -1876,4 +1876,4 @@ def get_tiny_dataset(
     return df_train, df_test
 
 
-# build_stats()
+build_stats()
