@@ -37,7 +37,7 @@ TEST_SIZE = 0.3
 RANDOM_STATE = 0
 
 base_dir = os.path.dirname(os.path.abspath(__file__))  # Diretório atual deste arquivo
-folder = os.path.join(base_dir, "datasets/")
+folder = os.path.join(base_dir, "datasets_path/")
 
 
 def writing_file_sync(run, filename="wandb_sync_file_imodel.txt"):
@@ -855,7 +855,74 @@ def get_ag_news():
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name
 
 
+def get_sentiment140(samples_train=5000):
+    """
+    sentiment140 Dataset
+    The sentiment140 dataset is a collection of 1.6 million tweets labeled by sentiment (positive/negative).
+    Extract from:
+    https://huggingface.co/datasets/stanfordnlp/sentiment140
+    """
+    
+    dataset_dict = load_dataset("stanfordnlp/sentiment140", trust_remote_code=True)
+
+    # Converte cada split em um DataFrame
+    df = pd.concat([dataset_dict["train"].to_pandas()])
+    if samples_train > len(df):
+        samples_train = len(df)
+    _, df = train_test_split(df, test_size=samples_train, stratify=df["sentiment"], random_state=RANDOM_STATE)
+    target_names = ["positive", "neutral", "negative"]
+    df["label"] = df["sentiment"]
+    l2c = {0: 2, 4: 0, 2: 1}  # sentiment to label
+    df["label"] = df["label"].map(l2c)
+    df["label_names"] = [target_names[lab] for lab in df["label"]]
+    df = df[["text", "label", "label_names"]]
+
+    df_train = df.reset_index(drop=True).copy()
+    df_train["subset"] = "train"
+    
+    df_test = dataset_dict["test"].to_pandas()
+    df_test["label"] = df_test["sentiment"]
+    df_test["label"] = df_test["label"].map(l2c)
+    df_test["label_names"] = [target_names[lab] for lab in df_test["label"]]
+    df_test = df_test[["text", "label", "label_names"]]
+    
+    df_test = df_test.reset_index(drop=True)
+    df_test["subset"] = "test"
+    dataset_name = "sentiment140"
+    return df_train, df_test, target_names, dataset_name
+
+
+
 def get_imdb():
+    """
+    IMDB Dataset
+    The IMDB dataset is a collection of 50,000 movie reviews from IMDB, labeled by sentiment (positive/negative).
+    Extract from:
+    https://huggingface.co/datasets/stanfordnlp/imdb
+    """
+    
+    dataset_dict = load_dataset("stanfordnlp/imdb", trust_remote_code=True)
+
+    # Converte cada split em um DataFrame
+    df = pd.concat([dataset_dict["train"].to_pandas()])
+    target_names = ["negative", "positive"]
+    df["label_names"] = [target_names[lab] for lab in df["label"]]
+    df = df[["text", "label", "label_names"]]
+
+    df_train = df.reset_index(drop=True).copy()
+    df_train["subset"] = "train"
+    
+    df_test = dataset_dict["test"].to_pandas()
+    df_test["label_names"] = [target_names[l] for l in df_test["label"]]
+    df_test = df_test[["text", "label", "label_names"]]
+    
+    df_test = df_test.reset_index(drop=True)
+    df_test["subset"] = "test"
+    dataset_name = "imdb"
+    return df_train, df_test, target_names, dataset_name
+
+
+def get_imdb2():
     # Dataset source:
     # !wget -O $path_data/aclImdb_v1.tar.gz https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz
     # path_data = "datasets/imdb"
@@ -1506,10 +1573,11 @@ datasets = [
     # get_persent,
     # get_overruling,
     # get_imdb,
+    get_sentiment140,
     # get_twitter,
-    get_isarcasm,
-    get_twitter_airline_sentiment,
-    get_poem_sentiment,
+    # get_isarcasm,
+    # get_twitter_airline_sentiment,
+    # get_poem_sentiment,
 ]
 
 
@@ -1806,4 +1874,4 @@ def get_tiny_dataset(
     return df_train, df_test
 
 
-# build_stats()
+build_stats()
