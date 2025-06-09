@@ -1573,7 +1573,7 @@ datasets = [
     # get_persent,
     # get_overruling,
     # get_imdb,
-    get_sentiment140,
+    # get_sentiment140,
     # get_twitter,
     # get_isarcasm,
     # get_twitter_airline_sentiment,
@@ -1606,6 +1606,8 @@ def best_max_lenght():
         "isarcasm": 64,
         "twitter_airline_sentiment": 32,
         "poem_sentiment": 32,
+        "imdb": 512,
+        "sentiment140": 32,
     }
 
 
@@ -1874,4 +1876,4 @@ def get_tiny_dataset(
     return df_train, df_test
 
 
-build_stats()
+# build_stats()
