@@ -26,6 +26,7 @@ from datasets import load_dataset
 nltk.download("punkt")
 nltk.download("stopwords")
 stop_words = set(stopwords.words("english"))
+nltk.download('punkt_tab')
 
 # Exemplo de DataFrame com dados de textos e rótulos
 # Suponha que o DataFrame esteja na variável 'df' e as features de texto estejam na coluna 'text' e os rótulos na coluna 'label'.
