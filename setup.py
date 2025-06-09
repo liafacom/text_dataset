@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="text_dataset",
-    version="0.1.14",
+    version="0.1.15",
     author="Eliton Perin",
     author_email="elitonperin@gmail.com",
     description="Wrapper para centralizar e facilitar o acesso a datasets.",
@@ -27,22 +27,22 @@ setup(
     package_data={
         "text_dataset": [
             "artifacts/*",
-            "datasets/*.csv",
-            "datasets/*.meta",
-            "datasets/*.txt",
-            "datasets/data-web-snippets/*.txt",
-            "datasets/mpqa/*.txt",
-            "datasets/sst2/*.tsv",
-            "datasets/sst5/*.csv",
-            "datasets/per_sen_t/*.csv",
-            "datasets/iSarcasm/*.csv",
-            "datasets/tag_my_news/business/*.txt",
-            "datasets/tag_my_news/entertainment/*.txt",
-            "datasets/tag_my_news/health/*.txt",
-            "datasets/tag_my_news/sci_tech/*.txt",
-            "datasets/tag_my_news/sport/*.txt",
-            "datasets/tag_my_news/us/*.txt",
-            "datasets/tag_my_news/world/*.txt",
-        ],  # Inclui os arquivos de datasets
+            "datasets_path/*.csv",
+            "datasets_path/*.meta",
+            "datasets_path/*.txt",
+            "datasets_path/data-web-snippets/*.txt",
+            "datasets_path/mpqa/*.txt",
+            "datasets_path/sst2/*.tsv",
+            "datasets_path/sst5/*.csv",
+            "datasets_path/per_sen_t/*.csv",
+            "datasets_path/iSarcasm/*.csv",
+            "datasets_path/tag_my_news/business/*.txt",
+            "datasets_path/tag_my_news/entertainment/*.txt",
+            "datasets_path/tag_my_news/health/*.txt",
+            "datasets_path/tag_my_news/sci_tech/*.txt",
+            "datasets_path/tag_my_news/sport/*.txt",
+            "datasets_path/tag_my_news/us/*.txt",
+            "datasets_path/tag_my_news/world/*.txt",
+        ],  # Inclui os arquivos de datasets_path
     },
 )
