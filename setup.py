@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="text_dataset",
-    version="0.1.19",
+    version="0.1.20",
     author="Eliton Perin",
     author_email="elitonperin@gmail.com",
     description="Wrapper para centralizar e facilitar o acesso a datasets.",
@@ -16,6 +16,8 @@ setup(
         "nltk",
         "scikit-learn",
         "tqdm",
+        "kagglehub",
+        "datasets",  # Biblioteca para manipulação de datasets
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
