@@ -1658,6 +1658,8 @@ def best_max_lenght():
         "poem_sentiment": 32,
         "imdb": 512,
         "sentiment140": 32,
+        "semeval_2017": 32,
+        "semeval_2013": 32,
     }
 
 
