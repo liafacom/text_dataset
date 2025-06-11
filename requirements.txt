@@ -4,3 +4,4 @@ tqdm
 nltk
 scikit-learn
 datasets
+kagglehub

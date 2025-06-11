@@ -21,6 +21,7 @@ import pandas as pd
 import nltk
 from nltk.corpus import twitter_samples
 from datasets import load_dataset
+import kagglehub
 
 # Definir as stopwords em português (ou altere para o idioma do seu dataset)
 nltk.download("punkt")
@@ -856,6 +857,52 @@ def get_ag_news():
     return df_train[columns_data], df_test[columns_data], target_names, dataset_name
 
 
+def get_semeval_2013():
+    """
+    Read SemEval 2013 dataset
+    https://www.kaggle.com/datasets/azzouza2018/semevaldatadets/data
+    """
+    path_data = kagglehub.dataset_download("azzouza2018/semevaldatadets")
+    
+    df_train = pd.read_csv(f"{path_data}/semeval-2013-train.csv", delimiter="\t")
+    df_dev = pd.read_csv(f"{path_data}/semeval-2013-dev.csv", delimiter="\t")
+    df_test = pd.read_csv(f"{path_data}/semeval-2013-test.csv", delimiter="\t")    
+    
+    df_train = pd.concat([df_train, df_dev]).reset_index(drop=True)
+    df_train['label'] = df_train["label"] + 1  # Adjust labels to start from 0
+    df_test['label'] = df_test["label"] + 1  # Adjust labels to start from 0
+    df_train["subset"] = "train"
+    df_test["subset"] = "test"
+    
+    target_names = ["negative", "neutral", "positive"]
+    df_train["label_names"] = [target_names[l] for l in df_train.label]
+    df_test["label_names"] = [target_names[l] for l in df_test.label]
+    
+    return df_train[columns_data], df_test[columns_data], target_names, "semeval_2013"
+
+def get_semeval_2017():
+    """
+    Read SemEval 2017 dataset
+    https://www.kaggle.com/datasets/azzouza2018/semevaldatadets/data
+    """
+    path_data = kagglehub.dataset_download("azzouza2018/semevaldatadets")
+    
+    df_train = pd.read_csv(f"{path_data}/semeval-2017-train.csv", delimiter="\t")
+    df_dev = pd.read_csv(f"{path_data}/semeval-2017-dev.csv", delimiter="\t")
+    df_test = pd.read_csv(f"{path_data}/semeval-2017-test.csv", delimiter="\t")    
+    
+    df_train = pd.concat([df_train, df_dev]).reset_index(drop=True)
+    df_train['label'] = df_train["label"] + 1  # Adjust labels to start from 0
+    df_test['label'] = df_test["label"] + 1  # Adjust labels to start from 0
+    df_train["subset"] = "train"
+    df_test["subset"] = "test"
+    
+    target_names = ["negative", "neutral", "positive"]
+    df_train["label_names"] = [target_names[l] for l in df_train.label]
+    df_test["label_names"] = [target_names[l] for l in df_test.label]
+    
+    return df_train[columns_data], df_test[columns_data], target_names, "semeval_2017"
+
 def get_sentiment140(samples_train=5000):
     """
     sentiment140 Dataset
@@ -870,7 +917,7 @@ def get_sentiment140(samples_train=5000):
     df = pd.concat([dataset_dict["train"].to_pandas()])
     df["label"] = df["sentiment"]
     l2c = {0: 2, 4: 0, 2: 1}  # sentiment to label
-    df["label"] = df["label"].map(l2c)
+    df["label"] = df["sentiment"].map(l2c)
     if samples_train > len(df):
         samples_train = len(df)
     _, df = train_test_split(df, test_size=samples_train, stratify=df["label"], random_state=RANDOM_STATE)
@@ -1574,11 +1621,13 @@ datasets = [
     # get_persent,
     # get_overruling,
     # get_imdb,
-    get_sentiment140,
+    # get_sentiment140,
     # get_twitter,
     # get_isarcasm,
     # get_twitter_airline_sentiment,
     # get_poem_sentiment,
+    # get_semeval_2013,
+    # get_semeval_2017,
 ]
 
 
