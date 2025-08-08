@@ -4,13 +4,9 @@ import os
 from datetime import datetime
 import pytz
 from typing import Counter
-import nltk
-from nltk.corpus import reuters
 import numpy as np
 import pandas as pd
 import requests
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 from sklearn import preprocessing
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.metrics import classification_report, roc_auc_score
@@ -19,15 +15,39 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from tqdm import tqdm
 import pandas as pd
 import nltk
-from nltk.corpus import twitter_samples
 from datasets import load_dataset
 import kagglehub
 
 # Definir as stopwords em português (ou altere para o idioma do seu dataset)
-nltk.download("punkt")
-nltk.download("stopwords")
+# Lista de recursos a verificar
+RECURSOS = [
+    "punkt",
+    "stopwords",
+    "punkt_tab",
+    "reuters",
+    "twitter_samples"
+]
+
+def verificar_e_instalar():
+    for recurso in RECURSOS:
+        try:
+            nltk.data.find(f"corpora/{recurso}")
+        except LookupError:
+            try:
+                nltk.data.find(f"tokenizers/{recurso}")
+            except LookupError:
+                print(f"Baixando recurso: {recurso}...")
+                nltk.download(recurso)
+
+# Verifica e instala recursos ausentes
+verificar_e_instalar()
+
+from nltk.corpus import reuters
+from nltk.corpus import twitter_samples
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
 stop_words = set(stopwords.words("english"))
-nltk.download('punkt_tab')
 
 # Exemplo de DataFrame com dados de textos e rótulos
 # Suponha que o DataFrame esteja na variável 'df' e as features de texto estejam na coluna 'text' e os rótulos na coluna 'label'.
