@@ -1,12 +1,10 @@
 import glob
-import json
 import os
 from datetime import datetime
 import pytz
 from typing import Counter
 import numpy as np
 import pandas as pd
-import requests
 from sklearn import preprocessing
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.metrics import classification_report, roc_auc_score
@@ -18,28 +16,29 @@ import nltk
 from datasets import load_dataset
 import kagglehub
 
-# Definir as stopwords em português (ou altere para o idioma do seu dataset)
-# Lista de recursos a verificar
-RECURSOS = [
-    "punkt",
-    "stopwords",
-    "punkt_tab",
-    "reuters",
-    "twitter_samples"
-]
+RECURSOS = {
+    "punkt": ["tokenizers/punkt"],
+    "stopwords": ["corpora/stopwords"],
+    "punkt_tab": ["tokenizers/punkt/PY3_tab"],  # parte do punkt
+    "reuters": ["corpora/reuters"],
+    "twitter_samples": ["corpora/twitter_samples"]
+}
 
 def verificar_e_instalar():
-    for recurso in RECURSOS:
-        try:
-            nltk.data.find(f"corpora/{recurso}")
-        except LookupError:
+    for recurso, caminhos in RECURSOS.items():
+        instalado = False
+        for caminho in caminhos:
             try:
-                nltk.data.find(f"tokenizers/{recurso}")
-            except LookupError:
-                print(f"Baixando recurso: {recurso}...")
-                nltk.download(recurso)
+                nltk.data.find(caminho)
+                instalado = True
+                break
+            except (LookupError, OSError):
+                continue
+        if not instalado:
+            print(f"Baixando recurso: {recurso}...")
+            nltk.download(recurso)
 
-# Verifica e instala recursos ausentes
+# Executa verificação e instalação
 verificar_e_instalar()
 
 from nltk.corpus import reuters
