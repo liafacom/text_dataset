@@ -21,8 +21,9 @@ RECURSOS = {
     "stopwords": ["corpora/stopwords"],
     "punkt_tab": ["tokenizers/punkt/PY3_tab"],  # parte do punkt
     "reuters": ["corpora/reuters"],
-    "twitter_samples": ["corpora/twitter_samples"]
+    "twitter_samples": ["corpora/twitter_samples"],
 }
+
 
 def verificar_e_instalar():
     for recurso, caminhos in RECURSOS.items():
@@ -37,6 +38,7 @@ def verificar_e_instalar():
         if not instalado:
             print(f"Baixando recurso: {recurso}...")
             nltk.download(recurso)
+
 
 # Executa verificação e instalação
 verificar_e_instalar()
@@ -140,17 +142,22 @@ def todo():
     # https://semeval.github.io/
     return
 
+
 def get_poem_sentiment():
     """
     google-research-datasets/poem_sentiment
     Extract from:
     https://huggingface.co/datasets/google-research-datasets/poem_sentiment
     """
-    
-    dataset_dict = load_dataset("google-research-datasets/poem_sentiment", trust_remote_code=True)
+
+    dataset_dict = load_dataset(
+        "google-research-datasets/poem_sentiment", trust_remote_code=True
+    )
 
     # Converte cada split em um DataFrame
-    df = pd.concat([dataset_dict["train"].to_pandas(), dataset_dict["validation"].to_pandas()])
+    df = pd.concat(
+        [dataset_dict["train"].to_pandas(), dataset_dict["validation"].to_pandas()]
+    )
     df["text"] = df["verse_text"]
     target_names = ["negative", "positive", "no_impact", "mixed"]
     df["label_names"] = [target_names[l] for l in df["label"]]
@@ -158,13 +165,13 @@ def get_poem_sentiment():
 
     df_train = df.reset_index(drop=True).copy()
     df_train["subset"] = "train"
-    
+
     df_test = dataset_dict["test"].to_pandas()
     df_test["text"] = df_test["verse_text"]
     target_names = ["negative", "positive", "no_impact", "mixed"]
     df_test["label_names"] = [target_names[l] for l in df_test["label"]]
     df_test = df_test[["text", "label", "label_names"]]
-    
+
     df_test = df_test.reset_index(drop=True)
     df_test["subset"] = "test"
     dataset_name = "poem_sentiment"
@@ -178,8 +185,10 @@ def get_twitter_airline_sentiment():
     https://huggingface.co/datasets/osanseviero/twitter-airline-sentiment
     https://www.kaggle.com/crowdflower/twitter-airline-sentiment
     """
-    
-    dataset_dict = load_dataset("osanseviero/twitter-airline-sentiment", trust_remote_code=True)
+
+    dataset_dict = load_dataset(
+        "osanseviero/twitter-airline-sentiment", trust_remote_code=True
+    )
 
     # Converte cada split em um DataFrame
     df = dataset_dict["train"].to_pandas()
@@ -371,6 +380,31 @@ def get_bbcsport():
     df_train["subset"] = "train"
     df_test["subset"] = "test"
     dataset_name = "bbcsport"
+    target_names = le.classes_
+    return df_train, df_test, target_names, dataset_name
+
+
+def get_temario():
+    # Dataset source:
+    #
+    data = pd.read_csv(folder + "teMario.csv")
+    # total 300
+    test_cstr_size = TEST_SIZE
+    le = preprocessing.LabelEncoder()
+    le.fit(data["class_name"])
+    data["label"] = le.transform(data["class_name"])
+    data["label_names"] = data["class_name"]
+    data = data.reset_index()
+    df_train, df_test = train_test_split(
+        data, test_size=test_cstr_size, stratify=data.label, random_state=RANDOM_STATE
+    )
+    df_train["subset"] = "train"
+    df_test["subset"] = "test"
+    df_train = df_train.reset_index(drop=True)
+    del df_train["index"]
+    df_test = df_test.reset_index(drop=True)
+    del df_test["index"]
+    dataset_name = "TeMario"
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
 
@@ -882,22 +916,23 @@ def get_semeval_2013():
     https://www.kaggle.com/datasets/azzouza2018/semevaldatadets/data
     """
     path_data = kagglehub.dataset_download("azzouza2018/semevaldatadets")
-    
+
     df_train = pd.read_csv(f"{path_data}/semeval-2013-train.csv", delimiter="\t")
     df_dev = pd.read_csv(f"{path_data}/semeval-2013-dev.csv", delimiter="\t")
-    df_test = pd.read_csv(f"{path_data}/semeval-2013-test.csv", delimiter="\t")    
-    
+    df_test = pd.read_csv(f"{path_data}/semeval-2013-test.csv", delimiter="\t")
+
     df_train = pd.concat([df_train, df_dev]).reset_index(drop=True)
-    df_train['label'] = df_train["label"] + 1  # Adjust labels to start from 0
-    df_test['label'] = df_test["label"] + 1  # Adjust labels to start from 0
+    df_train["label"] = df_train["label"] + 1  # Adjust labels to start from 0
+    df_test["label"] = df_test["label"] + 1  # Adjust labels to start from 0
     df_train["subset"] = "train"
     df_test["subset"] = "test"
-    
+
     target_names = ["negative", "neutral", "positive"]
     df_train["label_names"] = [target_names[l] for l in df_train.label]
     df_test["label_names"] = [target_names[l] for l in df_test.label]
-    
+
     return df_train[columns_data], df_test[columns_data], target_names, "semeval_2013"
+
 
 def get_semeval_2017():
     """
@@ -905,22 +940,23 @@ def get_semeval_2017():
     https://www.kaggle.com/datasets/azzouza2018/semevaldatadets/data
     """
     path_data = kagglehub.dataset_download("azzouza2018/semevaldatadets")
-    
+
     df_train = pd.read_csv(f"{path_data}/semeval-2017-train.csv", delimiter="\t")
     df_dev = pd.read_csv(f"{path_data}/semeval-2017-dev.csv", delimiter="\t")
-    df_test = pd.read_csv(f"{path_data}/semeval-2017-test.csv", delimiter="\t")    
-    
+    df_test = pd.read_csv(f"{path_data}/semeval-2017-test.csv", delimiter="\t")
+
     df_train = pd.concat([df_train, df_dev]).reset_index(drop=True)
-    df_train['label'] = df_train["label"] + 1  # Adjust labels to start from 0
-    df_test['label'] = df_test["label"] + 1  # Adjust labels to start from 0
+    df_train["label"] = df_train["label"] + 1  # Adjust labels to start from 0
+    df_test["label"] = df_test["label"] + 1  # Adjust labels to start from 0
     df_train["subset"] = "train"
     df_test["subset"] = "test"
-    
+
     target_names = ["negative", "neutral", "positive"]
     df_train["label_names"] = [target_names[l] for l in df_train.label]
     df_test["label_names"] = [target_names[l] for l in df_test.label]
-    
+
     return df_train[columns_data], df_test[columns_data], target_names, "semeval_2017"
+
 
 def get_sentiment140(samples_train=5000):
     """
@@ -929,7 +965,7 @@ def get_sentiment140(samples_train=5000):
     Extract from:
     https://huggingface.co/datasets/stanfordnlp/sentiment140
     """
-    
+
     dataset_dict = load_dataset("stanfordnlp/sentiment140", trust_remote_code=True)
 
     # Converte cada split em um DataFrame
@@ -939,25 +975,26 @@ def get_sentiment140(samples_train=5000):
     df["label"] = df["sentiment"].map(l2c)
     if samples_train > len(df):
         samples_train = len(df)
-    _, df = train_test_split(df, test_size=samples_train, stratify=df["label"], random_state=RANDOM_STATE)
+    _, df = train_test_split(
+        df, test_size=samples_train, stratify=df["label"], random_state=RANDOM_STATE
+    )
     target_names = ["positive", "neutral", "negative"]
     df["label_names"] = [target_names[lab] for lab in df["label"]]
     df = df[["text", "label", "label_names"]]
 
     df_train = df.reset_index(drop=True).copy()
     df_train["subset"] = "train"
-    
+
     df_test = dataset_dict["test"].to_pandas()
     df_test["label"] = df_test["sentiment"]
     df_test["label"] = df_test["label"].map(l2c)
     df_test["label_names"] = [target_names[lab] for lab in df_test["label"]]
     df_test = df_test[["text", "label", "label_names"]]
-    
+
     df_test = df_test.reset_index(drop=True)
     df_test["subset"] = "test"
     dataset_name = "sentiment140"
     return df_train, df_test, target_names, dataset_name
-
 
 
 def get_imdb():
@@ -967,7 +1004,7 @@ def get_imdb():
     Extract from:
     https://huggingface.co/datasets/stanfordnlp/imdb
     """
-    
+
     dataset_dict = load_dataset("stanfordnlp/imdb", trust_remote_code=True)
 
     # Converte cada split em um DataFrame
@@ -978,11 +1015,11 @@ def get_imdb():
 
     df_train = df.reset_index(drop=True).copy()
     df_train["subset"] = "train"
-    
+
     df_test = dataset_dict["test"].to_pandas()
     df_test["label_names"] = [target_names[l] for l in df_test["label"]]
     df_test = df_test[["text", "label", "label_names"]]
-    
+
     df_test = df_test.reset_index(drop=True)
     df_test["subset"] = "test"
     dataset_name = "imdb"
