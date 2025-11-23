@@ -386,7 +386,7 @@ def get_bbcsport():
 
 def get_temario():
     # Dataset source:
-    #
+    # https://www.linguateca.pt/Repositorio/TeMario/
     data = pd.read_csv(folder + "teMario.csv")
     # total 300
     test_cstr_size = TEST_SIZE
