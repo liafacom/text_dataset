@@ -384,6 +384,30 @@ def get_bbcsport():
     return df_train, df_test, target_names, dataset_name
 
 
+def get_noticias():
+    # Dataset source:
+    # https://www.linguateca.pt/Repositorio/TeMario/
+    data = pd.read_csv(folder + "Historico_de_materias.csv")
+    test_noticias_size = TEST_SIZE
+    le = preprocessing.LabelEncoder()
+    data['text'] = data.conteudo_noticia.apply(str)
+    le.fit(data["assunto"])
+    data["label"] = le.transform(data["assunto"])
+    data["label_names"] = data["assunto"]
+    data = data.reset_index()
+    df_train, df_test = train_test_split(
+        data, test_size=test_noticias_size, stratify=data.label, random_state=RANDOM_STATE
+    )
+    df_train["subset"] = "train"
+    df_test["subset"] = "test"
+    df_train = df_train.reset_index(drop=True)
+    del df_train["index"]
+    df_test = df_test.reset_index(drop=True)
+    del df_test["index"]
+    dataset_name = "noticias"
+    target_names = le.classes_
+    return df_train, df_test, target_names, dataset_name
+
 def get_temario():
     # Dataset source:
     # https://www.linguateca.pt/Repositorio/TeMario/
