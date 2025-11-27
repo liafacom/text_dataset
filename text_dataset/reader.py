@@ -390,13 +390,16 @@ def get_noticias():
     data = pd.read_csv(folder + "Historico_de_materias.csv")
     test_noticias_size = TEST_SIZE
     le = preprocessing.LabelEncoder()
-    data['text'] = data.conteudo_noticia.apply(str)
+    data["text"] = data.conteudo_noticia.apply(str)
     le.fit(data["assunto"])
     data["label"] = le.transform(data["assunto"])
     data["label_names"] = data["assunto"]
     data = data.reset_index()
     df_train, df_test = train_test_split(
-        data, test_size=test_noticias_size, stratify=data.label, random_state=RANDOM_STATE
+        data,
+        test_size=test_noticias_size,
+        stratify=data.label,
+        random_state=RANDOM_STATE,
     )
     df_train["subset"] = "train"
     df_test["subset"] = "test"
@@ -407,6 +410,7 @@ def get_noticias():
     dataset_name = "noticias"
     target_names = le.classes_
     return df_train, df_test, target_names, dataset_name
+
 
 def get_temario():
     # Dataset source:
@@ -1799,6 +1803,11 @@ def best_max_lenght():
         "sentiment140": 32,
         "semeval_2017": 32,
         "semeval_2013": 32,
+        "r8_size_30_80": 100,
+        "r8_size_80_120": 160,
+        "r8_size_180_220": 256,
+        "r8_size_280_320": 384,
+        "r8_size_380_420": 512,
     }
 
 
