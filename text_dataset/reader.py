@@ -604,6 +604,65 @@ def get_r8():
     return df_train, df_test, target_names, dataset_name
 
 
+def get_dataset_between_size(func, min_len=450, max_len=550):
+    df_train, df_test, target_names, dataset_name = func()
+    df_train["text"] = df_train.text.apply(str)
+    df_train["len_words"] = [len(w) for w in df_train.text.str.split()]
+    df_test["text"] = df_test.text.apply(str)
+    df_test["len_words"] = [len(w) for w in df_test.text.str.split()]
+
+    df_train = df_train[
+        (min_len < df_train.len_words) & (df_train.len_words < max_len)
+    ].reset_index(drop=True)
+    df_test = df_test[(min_len < df_test.len_words) & (df_test.len_words < max_len)]
+    return df_train, df_test, target_names, f"r8_size_{min_len}_{max_len}"
+
+
+def get_r8_50():
+    min_len = 30
+    max_len = 70
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_r8, min_len=min_len, max_len=max_len
+    )
+    return df_train, df_test, target_names, f"r8_size_{min_len}_{max_len}"
+
+
+def get_r8_100():
+    min_len = 80
+    max_len = 120
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_r8, min_len=min_len, max_len=max_len
+    )
+    return df_train, df_test, target_names, f"r8_size_{min_len}_{max_len}"
+
+
+def get_r8_200():
+    min_len = 180
+    max_len = 220
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_r8, min_len=min_len, max_len=max_len
+    )
+    return df_train, df_test, target_names, f"r8_size_{min_len}_{max_len}"
+
+
+def get_r8_300():
+    min_len = 280
+    max_len = 320
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_r8, min_len=min_len, max_len=max_len
+    )
+    return df_train, df_test, target_names, f"r8_size_{min_len}_{max_len}"
+
+
+def get_r8_400():
+    min_len = 350
+    max_len = 450
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_r8, min_len=min_len, max_len=max_len
+    )
+    return df_train, df_test, target_names, f"r8_size_{min_len}_{max_len}"
+
+
 def get_r8_tiny(max_sample_class=10, random_state=42):
     # Dataset source: https://github.com/vitormeriat/nlp-based-text-gcn/tree/main/data/corpus
     data = pd.read_csv(
