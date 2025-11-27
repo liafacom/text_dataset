@@ -1803,7 +1803,7 @@ def best_max_lenght():
         "sentiment140": 32,
         "semeval_2017": 32,
         "semeval_2013": 32,
-        "r8_size_30_80": 100,
+        "r8_size_30_70": 100,
         "r8_size_80_120": 160,
         "r8_size_180_220": 256,
         "r8_size_280_320": 384,
