@@ -632,7 +632,7 @@ def get_r8():
     return df_train, df_test, target_names, dataset_name
 
 
-def get_dataset_between_size(func, min_len=450, max_len=550):
+def get_dataset_between_size(func, min_len=450, max_len=550, max_samples=1000):
     df_train, df_test, target_names, dataset_name = func()
     df_train["text"] = df_train.text.apply(str)
     df_train["len_words"] = [len(w) for w in df_train.text.str.split()]
@@ -641,9 +641,65 @@ def get_dataset_between_size(func, min_len=450, max_len=550):
 
     df_train = df_train[
         (min_len < df_train.len_words) & (df_train.len_words < max_len)
-    ].reset_index(drop=True)
-    df_test = df_test[(min_len < df_test.len_words) & (df_test.len_words < max_len)]
+    ].reset_index(drop=True).head(max_samples)
+    df_test = df_test[(min_len < df_test.len_words) & (df_test.len_words < max_len)].reset_index(drop=True).head(max_samples)
     return df_train, df_test, target_names, f"r8_size_{min_len}_{max_len}"
+
+def get_20news_50(max_samples=500):
+    min_len = 30
+    max_len = 70
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_20newsgroups, min_len=min_len, max_len=max_len, max_samples=max_samples
+    )
+    return df_train, df_test, target_names, f"20news_size_{min_len}_{max_len}"
+
+def get_20news_100(max_samples=500):
+    min_len = 80
+    max_len = 120
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_20newsgroups, min_len=min_len, max_len=max_len, max_samples=max_samples
+    )
+    return df_train, df_test, target_names, f"20news_size_{min_len}_{max_len}"
+
+def get_20news_200(max_samples=500):
+    min_len = 180
+    max_len = 220
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_20newsgroups, min_len=min_len, max_len=max_len, max_samples=max_samples
+    )
+    return df_train, df_test, target_names, f"20news_size_{min_len}_{max_len}"
+
+def get_20news_300(max_samples=500):
+    min_len = 280
+    max_len = 320
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_20newsgroups, min_len=min_len, max_len=max_len, max_samples=max_samples
+    )
+    return df_train, df_test, target_names, f"20news_size_{min_len}_{max_len}"
+
+def get_20news_400(max_samples=500):
+    min_len = 380
+    max_len = 420
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_20newsgroups, min_len=min_len, max_len=max_len, max_samples=max_samples
+    )
+    return df_train, df_test, target_names, f"20news_size_{min_len}_{max_len}"
+
+def get_agnews_50(max_samples=1000):
+    min_len = 30
+    max_len = 70
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_agnew_hf, min_len=min_len, max_len=max_len, max_samples=max_samples
+    )
+    return df_train, df_test, target_names, f"agnews_size_{min_len}_{max_len}"
+
+def get_agnews_100(max_samples=1000):
+    min_len = 80
+    max_len = 120
+    df_train, df_test, target_names, _ = get_dataset_between_size(
+        get_agnew_hf, min_len=min_len, max_len=max_len, max_samples=max_samples
+    )
+    return df_train, df_test, target_names, f"agnews_size_{min_len}_{max_len}"
 
 
 def get_r8_50():
@@ -1285,6 +1341,30 @@ def get_trec_6():
 
     return train_df, test_df, target_names, dataset_name
 
+def get_agnew_hf():
+    from datasets import load_dataset
+
+    ds = load_dataset("sh0416/ag_news", trust_remote_code=True)
+
+    # Converte cada split em um DataFrame
+    df = pd.concat([ds["train"].to_pandas()])
+    target_names = ["1", "2", "3", "4"]
+    df["label_names"] = [target_names[lab-1] for lab in df["label"]]
+    df["text"] = df["description"]
+    df = df[["text", "label", "label_names"]]
+
+    df_train = df.reset_index(drop=True).copy()
+    df_train["subset"] = "train"
+
+    df_test = ds["test"].to_pandas()
+    df_test["label_names"] = [target_names[l-1] for l in df_test["label"]]
+    df_test["text"] = df_test["description"]
+    df_test = df_test[["text", "label", "label_names"]]
+
+    df_test = df_test.reset_index(drop=True)
+    df_test["subset"] = "test"
+    dataset_name = "ag_news"
+    return df_train, df_test, target_names, dataset_name
 
 def get_agnew():
     import torchtext
@@ -1808,6 +1888,13 @@ def best_max_lenght():
         "r8_size_180_220": 256,
         "r8_size_280_320": 384,
         "r8_size_380_420": 512,
+        "agnews_size_30_70": 100,
+        "agnews_size_80_120": 160,
+        "20news_size_30_70": 100,
+        "20news_size_80_120": 160,
+        "20news_size_180_220": 256,
+        "20news_size_280_320": 384,
+        "20news_size_380_420": 512,
     }
 
 
